@@ -1,5 +1,8 @@
 package compute.job;
 
+import compute.mapper.Mapper;
+import compute.reducer.Reducer;
+
 
 public class Job {
   String jobId;

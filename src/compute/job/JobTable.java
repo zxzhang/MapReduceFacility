@@ -6,6 +6,9 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+import compute.mapper.Mapper;
+import compute.reducer.Reducer;
+
 class IDGenerator{
   private SecureRandom random = new SecureRandom();
   
