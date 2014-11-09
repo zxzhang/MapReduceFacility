@@ -16,10 +16,10 @@ public class JobTrackerServer implements JobTracker {
   JobTable jobTable;
   TaskTrackerTable taskTrackerTable;
   
-  public String submitJob( String dfsInputPath, 
+  public String submitJob( String dfsInputPath, String dfsOutputPath,
       Class<? extends Mapper> mapper, Class<? extends Reducer> reducer){
     
-    return jobTable.addJob(dfsInputPath, mapper, reducer);
+    return jobTable.addJob(dfsInputPath, dfsOutputPath, mapper, reducer);
   }
 
   public JobTrackMessage trackJob(String jobId){
@@ -43,9 +43,6 @@ public class JobTrackerServer implements JobTracker {
   }
   
   public static void main(String[] args) {
-    String workingDir = System.getProperty("user.dir");
-    System.out.println("current dir: " + workingDir);
-    
     String host = "localhost";
     //launch JobTrackerServer 
     try {

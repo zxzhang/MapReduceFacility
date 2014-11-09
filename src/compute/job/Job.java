@@ -8,6 +8,7 @@ public class Job {
   String jobId;
   JobStatus jobStatus;
   String dfsInputPath; 
+  String dfsOutputPath;
   Class<? extends Mapper> mapper;
   Class<? extends Reducer> reducer;
   public String getJobId(){return this.jobId;}

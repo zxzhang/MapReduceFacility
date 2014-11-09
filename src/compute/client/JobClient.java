@@ -45,7 +45,7 @@ public class JobClient {
     Class mapper = Class.forName(mapperClassStr);
     Class reducer = Class.forName(reducerClassStr);
     
-    String jobId = jobTracker.submitJob(dfsInputPath, mapper, reducer);
+    String jobId = jobTracker.submitJob(dfsInputPath, dfsOutputPath, mapper, reducer);
     if(jobId==null){
       System.out.println("Something went wrong.");
     }else{
@@ -54,31 +54,31 @@ public class JobClient {
     
   }
   
-  public void shell() throws IOException, ClassNotFoundException, InterruptedException{
-    BufferedReader br = 
-        new BufferedReader(new InputStreamReader(System.in));
-    String line;
-    while(true){
-      System.out.print(">>>>: ");
-      line = br.readLine();
-      line = line.trim();
-      
-      String[] tmp = line.split(" ");
-      
-      if(tmp[0].equals("quit")){
-        System.out.println("Good bye ~ . :D");
-        System.exit(0);
-      }else if(tmp[0].equals("run")){
-        //run $(dfsInputPath) $(dfsOtuputPath) $(mapperClass) $(reducerClass)
-        if(tmp.length < 5 ){ 
-          System.out.println("--not enough args: run $(dfsInputPath) $(dfsOtuputPath) $(mapperClass) $(reducerClass)");
-          continue;
-        }
-        run(tmp);
-      }
-      
-    }
-  }
+//  public void shell() throws IOException, ClassNotFoundException, InterruptedException{
+//    BufferedReader br = 
+//        new BufferedReader(new InputStreamReader(System.in));
+//    String line;
+//    while(true){
+//      System.out.print(">>>>: ");
+//      line = br.readLine();
+//      line = line.trim();
+//      
+//      String[] tmp = line.split(" ");
+//      
+//      if(tmp[0].equals("quit")){
+//        System.out.println("Good bye ~ . :D");
+//        System.exit(0);
+//      }else if(tmp[0].equals("run")){
+//        //run $(dfsInputPath) $(dfsOtuputPath) $(mapperClass) $(reducerClass)
+//        if(tmp.length < 5 ){ 
+//          System.out.println("--not enough args: run $(dfsInputPath) $(dfsOtuputPath) $(mapperClass) $(reducerClass)");
+//          continue;
+//        }
+//        run(tmp);
+//      }
+//      
+//    }
+//  }
   
   public static void main(String[] args) throws NotBoundException, IOException, ClassNotFoundException, InterruptedException{
     // host 
@@ -89,6 +89,6 @@ public class JobClient {
     
     JobClient jobClient = new JobClient(jobTracker);
     
-    jobClient.shell();
+    jobClient.run(args);
   }
 }

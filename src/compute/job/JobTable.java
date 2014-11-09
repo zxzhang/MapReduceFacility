@@ -27,7 +27,7 @@ public class JobTable {
     idGenerator = new IDGenerator();
   }
   
-  public String addJob(String dfsInputPath, Class< ? extends Mapper> mapper, Class<? extends Reducer> reducer){
+  public String addJob(String dfsInputPath, String dfsOutputPath, Class< ? extends Mapper> mapper, Class<? extends Reducer> reducer){
     // get job id
     String jobId;
     while(true){
