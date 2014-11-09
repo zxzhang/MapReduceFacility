@@ -1,14 +1,26 @@
+package compute.test;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
 public class FakeDFS extends DFS {
   String prefix;
-
-  public static DFS getConnection(String ip, int port){
-    prefix = String.format("/tmp/%s_%d", ip, port);
+  private static FakeDFS dfs;
+  
+  private FakeDFS(String ip, int port){
+    this.prefix = String.format("/tmp/%s_%d", ip, port);
     File file = new File(prefix);
     file.mkdirs();
+  }
+  
+  public static DFS getConnection(String ip, int port){
+    if(dfs == null){
+      dfs = new FakeDFS(ip, port);
+    }
+    return dfs;
   }
   public DFSReader getReader(String dfsPath) throws Exception{
     String filePath = String.format("%s/%s", prefix, dfsPath);
@@ -16,7 +28,7 @@ public class FakeDFS extends DFS {
   }
   
   public DFSWriter getWriter(String dfsPath) throws Exception{
-    String filePath = String.format("%s/%s", prefirx, dfsPath);
+    String filePath = String.format("%s/%s", prefix, dfsPath);
     return new FakeDFSWriter(filePath);
   }
   
@@ -26,7 +38,7 @@ public class FakeDFS extends DFS {
     File[] listOfFiles = folder.listFiles(); 
     List<String> outputList = new ArrayList<String>();
     for(File f : listOfFiles){
-      outputList.append(f.getName());
+      outputList.add(f.getName());
     }
     return outputList;
   }
