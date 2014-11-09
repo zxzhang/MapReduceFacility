@@ -7,7 +7,6 @@ import java.rmi.server.UnicastRemoteObject;
 
 import compute.job.message.HeartbeatMessage;
 import compute.job.message.JobTrackMessage;
-import compute.job.message.MonitorMessage;
 import compute.mapper.Mapper;
 import compute.reducer.Reducer;
 import compute.task.TaskTracker;
