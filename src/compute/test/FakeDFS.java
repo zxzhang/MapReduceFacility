@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import compute.utility.Host;
+
 
 
 public class FakeDFS extends DFS {
@@ -11,7 +13,7 @@ public class FakeDFS extends DFS {
   private static FakeDFS dfs;
   
   private FakeDFS(String ip, int port){
-    this.prefix = String.format("/tmp/%s_%d", ip, port);
+    this.prefix = String.format("/tmp/%s:%d", ip, port);
     File file = new File(prefix);
     file.mkdirs();
   }
@@ -43,4 +45,8 @@ public class FakeDFS extends DFS {
     return outputList;
   }
   
+  public Host getHost(String dfsPath, int version){
+    int port = 9990 + version;
+    return new Host("localhost", port);
+  }
 }
