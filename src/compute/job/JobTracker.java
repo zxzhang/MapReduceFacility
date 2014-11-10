@@ -11,9 +11,7 @@ import compute.task.TaskTracker;
 
 
 
-
 public interface JobTracker extends  Remote {
-//  public MonitorMessage monitorJob(String jobId) throws RemoteException;
   
   public String submitJob(String dfsInputPath, String dfsOutputPath, Class<? extends Mapper> mapper, Class<? extends Reducer> reducer) throws RemoteException;
 

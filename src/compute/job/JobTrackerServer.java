@@ -66,8 +66,4 @@ public class JobTrackerServer implements JobTracker {
     
     return true;
   }
-
-
-
-
 }
