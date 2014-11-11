@@ -10,7 +10,6 @@ public class MapTask extends Task{
   public MapTask(String dfsInputPath, Class mapperClass){
     this.setTaskType(TaskType.MAP);
     this.dfsInputPath = dfsInputPath;
-//    this.localOutputPath = localOutputPath;
     this.mapperClass = mapperClass;
   }
   
@@ -20,6 +19,11 @@ public class MapTask extends Task{
   public String getLocalOutputPath(){
     return localOutputPath;
   }
+  
+  public void setLocalOutputPath(String localOutputPath){
+    this.localOutputPath = localOutputPath;
+  }
+  
   public Class getMapperClass(){
     return mapperClass;
   }

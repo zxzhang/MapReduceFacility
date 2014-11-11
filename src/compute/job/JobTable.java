@@ -4,6 +4,7 @@ package compute.job;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import compute.mapper.Mapper;
@@ -27,7 +28,7 @@ public class JobTable {
     idGenerator = new IDGenerator();
   }
   
-  public String addJob(String dfsInputPath, String dfsOutputPath, Class< ? extends Mapper> mapper, Class<? extends Reducer> reducer){
+  public Job addJob(String dfsInputPath, String dfsOutputPath, Class< ? extends Mapper> mapper, Class<? extends Reducer> reducer, List<String> splitInputFiles){
     // get job id
     String jobId;
     while(true){
@@ -39,10 +40,11 @@ public class JobTable {
       }
     }
     
+    Job job = new Job(jobId, dfsInputPath, mapper, reducer, splitInputFiles);
     // insert into tableMap
-    tableMap.put(jobId, new Job(jobId, dfsInputPath, mapper, reducer)); 
+    tableMap.put(jobId, job); 
     
-    return jobId;
+    return job;
   }
   
   public Job get(String jobId){

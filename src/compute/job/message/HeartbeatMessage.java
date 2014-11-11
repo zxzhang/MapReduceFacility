@@ -3,19 +3,23 @@ package compute.job.message;
 import java.io.Serializable;
 
 public class HeartbeatMessage implements Serializable{
-  public int numOfMapperSlot;
-  public int numOfReducerSlot;
+  int mapTaskSlot;
+  int reducePreprocessTaskSlot;
+  int reduceTaskSlot;
   
-  public HeartbeatMessage(int numOfMapperSlot, int numOfReducerSlot){
-    this.numOfMapperSlot = numOfMapperSlot;
-    this.numOfReducerSlot = numOfReducerSlot;
+  public HeartbeatMessage(int mapTaskSlot, int reducePreprocessTaskSlot, int reduceTaskSlot){
+    this.mapTaskSlot = mapTaskSlot;
+    this.reducePreprocessTaskSlot = reducePreprocessTaskSlot;
+    this.reduceTaskSlot = reduceTaskSlot;
   }
   
-  public int getNumOfMapperSlot(){
-    return numOfMapperSlot;
+  public int getMapTaskSlot(){
+    return mapTaskSlot;
   }
-  
-  public int getNumOfReducerSlot(){
-    return numOfReducerSlot;
+  public int getReducePreprocessTaskSlot(){
+    return reducePreprocessTaskSlot;
+  }
+  public int getReduceTaskSlot(){
+    return reduceTaskSlot;
   }
 }

@@ -4,22 +4,36 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 import compute.job.message.HeartbeatMessage;
 import compute.job.message.JobTrackMessage;
 import compute.mapper.Mapper;
 import compute.reducer.Reducer;
+import compute.scheduler.TaskScheduler;
 import compute.task.TaskTracker;
+import compute.test.DFS;
+import compute.test.FakeDFS;
 
 
 public class JobTrackerServer implements JobTracker {
   JobTable jobTable;
   TaskTrackerTable taskTrackerTable;
+  DFS dfs;
+  TaskScheduler taskScheduler;
   
   public String submitJob( String dfsInputPath, String dfsOutputPath,
       Class<? extends Mapper> mapper, Class<? extends Reducer> reducer){
+    // find all spilt input files
+    List<String> splitInputFiles = dfs.ls(dfsInputPath);// must know the data's location
     
-    return jobTable.addJob(dfsInputPath, dfsOutputPath, mapper, reducer);
+    // add into task queue
+    Job job = jobTable.addJob(dfsInputPath, dfsOutputPath, mapper, reducer, splitInputFiles);
+  
+    // add job into task scheduler
+    taskScheduler.addJob(job);
+    
+    return job.getJobId();
   }
 
   public JobTrackMessage trackJob(String jobId){
@@ -30,6 +44,8 @@ public class JobTrackerServer implements JobTracker {
   public JobTrackerServer(){
     jobTable = new JobTable();
     taskTrackerTable = new TaskTrackerTable();
+    dfs = FakeDFS.getConnection("localhost", 8888);
+    taskScheduler = new TaskScheduler(dfs, taskTrackerTable);
   }
   
   public boolean register(TaskTracker taskTracker) throws RemoteException{
