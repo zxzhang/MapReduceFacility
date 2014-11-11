@@ -1,12 +1,13 @@
 package compute.job;
 
+import java.io.Serializable;
 import java.util.List;
 
 import compute.mapper.Mapper;
 import compute.reducer.Reducer;
 
 
-public class Job {
+public class Job implements Serializable{
   String jobId;
   JobStatus jobStatus;
   String dfsInputPath; 

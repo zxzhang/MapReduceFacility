@@ -38,6 +38,7 @@ public class JobClient {
   }
   
   public void run(String[] args) throws ClassNotFoundException, RemoteException, InterruptedException{
+    
     String dfsInputPath = args[1];
     String dfsOutputPath = args[2];
     String mapperClassStr = args[3];

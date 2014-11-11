@@ -1,10 +1,12 @@
 package compute.test;
 
 import java.io.*;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import compute.utility.Host;
+import compute.utility.HostUtility;
 
 
 
@@ -40,13 +42,20 @@ public class FakeDFS extends DFS {
     File[] listOfFiles = folder.listFiles(); 
     List<String> outputList = new ArrayList<String>();
     for(File f : listOfFiles){
-      outputList.add(f.getName());
+      outputList.add(dfsDirPath+"/"+f.getName());
     }
     return outputList;
   }
   
   public Host getHost(String dfsPath, int version){
-    int port = 9990 + version;
-    return new Host("localhost", port);
+//    int port = 9990 + version;
+    int port = 1099;
+    try {
+      return new Host(HostUtility.getHostName(), port);
+    } catch (UnknownHostException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
   }
 }

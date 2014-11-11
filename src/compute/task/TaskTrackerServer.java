@@ -8,6 +8,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import compute.configure.TaskTrackerConfiguration;
 import compute.job.JobTracker;
@@ -55,11 +56,11 @@ public class TaskTrackerServer implements TaskTracker {
   }
   
   public String getHostName(){
-    return this.getHostName();
+    return this.hostName;
   }
   
   public int getPort(){
-    return this.getPort();
+    return port;
   }
   
   public String getTaskTrackerId(){
@@ -67,6 +68,18 @@ public class TaskTrackerServer implements TaskTracker {
   }
  
   public TaskTrackerServer(String taskTrackerId, String hostName, int port){
+    pendingMapTasks = new LinkedList<MapTask>();
+    pendingReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
+    pendingReduceTasks = new LinkedList<ReduceTask>();
+
+    runningMapTasks = new LinkedList<MapTask>();
+    runningReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
+    runningReduceTasks = new LinkedList<ReduceTask>();
+    
+    finishedMapTasks = new LinkedList<MapTask>();
+    finishedReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
+    finishedReduceTasks = new LinkedList<ReduceTask>();  
+    
     this.taskTrackerId = taskTrackerId;
     this.hostName = hostName;
     this.port = port;
@@ -123,6 +136,8 @@ public class TaskTrackerServer implements TaskTracker {
   }
   
   public boolean assignMapTask(MapTask task){
+    System.out.println("Assign Task" + task.toString());
+    
     if(getMapTaskSlot()>0){
       addPendingMapTask(task);
       return true;

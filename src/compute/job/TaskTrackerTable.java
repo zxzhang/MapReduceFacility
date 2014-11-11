@@ -1,5 +1,6 @@
 package compute.job;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,10 +35,14 @@ class TaskTrackerTableItem{
   public TaskTrackerStats getStats(){
     return taskTrackerStats;
   }
+  
+  public void setTaskTrackerStats(TaskTrackerStats taskTrackerStats){
+    this.taskTrackerStats = taskTrackerStats;
+  }
 }
 
 public class TaskTrackerTable {
-  private Map<String, TaskTrackerTableItem> taskTrackerMap;
+  public Map<String, TaskTrackerTableItem> taskTrackerMap;
   
   public TaskTrackerTable(){
     this.taskTrackerMap = new HashMap<String, TaskTrackerTableItem>();
@@ -54,6 +59,7 @@ public class TaskTrackerTable {
   }
   public TaskTracker get(Host host){
     for(TaskTrackerTableItem taskTrackerItem: taskTrackerMap.values()){
+
        if(taskTrackerItem.getHost().equals(host)){
          return taskTrackerItem.getTaskTracker();
        }
@@ -63,15 +69,46 @@ public class TaskTrackerTable {
   
   public TaskTrackerStats getTaskTrackerStats(Host host){
     for(TaskTrackerTableItem taskTrackerItem: taskTrackerMap.values()){
+
       if(taskTrackerItem.getHost().equals(host)){
         return taskTrackerItem.getStats();
       }
     }
     return null;
   }
+  public TaskTrackerStats getTaskTrackerStats(String taskTrackerId){
+    TaskTrackerTableItem item = this.taskTrackerMap.get(taskTrackerId);
+    return item.taskTrackerStats;
+  }
+  
+  public void setTaskTrackerStats(String taskTrackerId, TaskTrackerStats taskTrackerStats){
+    TaskTrackerTableItem item = this.taskTrackerMap.get(taskTrackerId);
+    item.setTaskTrackerStats(taskTrackerStats);
+  }
   
   public long updateTime(String taskTrackerId){
     TaskTrackerTableItem item = this.taskTrackerMap.get(taskTrackerId);
     return item.updateTime();  
   }
+  
+  public String toString(){
+    StringBuilder sb= new StringBuilder();
+    for(TaskTrackerTableItem item: this.taskTrackerMap.values()){
+      try {
+        sb.append(item.taskTracker.getHostName());
+      } catch (RemoteException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      sb.append("\t");
+      try {
+        sb.append(item.taskTracker.getPort());
+      } catch (RemoteException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    return sb.toString();
+  }
+
 }

@@ -53,7 +53,16 @@ public class TaskScheduler {
 
   }
   
-
+  public int getPenndingMapTasksSize(){
+    return this.pendingMapTasks.size();
+  }
+  
+  public int getPenndingReduceTasksSize(){
+    return this.pendingReduceTasks.size();
+  }
+  public int getPenndingReducePreprocessTasksSize(){
+    return this.pendingReducePreprocessTasks.size();
+  }
   
   public boolean addPendingMapTask(MapTask task){
     task.setTaskStatus(TaskStatus.PENDING);
@@ -118,12 +127,13 @@ public class TaskScheduler {
     for(MapTask mapTask: mapTaskList){
       this.addPendingMapTask(mapTask);
     }
-    
     return mapTaskList;
   }
   
   public boolean schedulePendingMapTask() {
     Iterator<MapTask> pendingMapTasks = this.pendingMapTasks.iterator();
+    
+//    System.out.println("pendingMapTasks size:" + this.pendingMapTasks.size());
     
     while(pendingMapTasks.hasNext()){
       MapTask task = pendingMapTasks.next();
@@ -137,13 +147,17 @@ public class TaskScheduler {
         if(stats != null && stats.getMapTaskSlot() > 0){
           // assign task
           TaskTracker taskTracker = taskTrackerTable.get(host);  
+          
+          System.out.println("taskTracker: " + host);
+          
           try {
             if(taskTracker.assignMapTask(task)){
               // remove from pending queue
               pendingMapTasks.remove();
               // add into running queue
               addRunningMapTask(task);
-              break; // if success            
+              
+              break; // if success                   
             }
           } catch (RemoteException e) {
              // cannot assign the task, because it cannot connect to the remote host 

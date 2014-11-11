@@ -58,6 +58,20 @@ public class JobTrackerServer implements JobTracker {
     }
   }
   
+  public void run() throws InterruptedException{
+      while(true){ // the loop executes each 1 secs
+        // check 
+        if(taskScheduler.getPenndingMapTasksSize()> 0){
+          System.out.println("check pending task....");
+          taskScheduler.schedulePendingMapTask();
+        }
+        
+        System.out.println(taskTrackerTable);
+        
+        Thread.sleep(1000);  
+    }
+  }
+  
   public static void main(String[] args) {
     String host = "localhost";
     //launch JobTrackerServer 
@@ -69,7 +83,9 @@ public class JobTrackerServer implements JobTracker {
       Registry registry = LocateRegistry.getRegistry();
       registry.rebind("jobtracker", stub);
       System.out.println("Server ready");
-    } catch (RemoteException e) {
+      
+      obj.run();
+    } catch (Exception e) {
       System.err.println("Server exception[RemoteException] : " + e.toString());
       e.printStackTrace();
     }
@@ -77,9 +93,17 @@ public class JobTrackerServer implements JobTracker {
 
   @Override
   public boolean heartbeat(String taskTrackerId, HeartbeatMessage hbm) throws RemoteException {
+    System.out.println("Heart Beating.: " + taskTrackerId);
+    
     // update TaskTracker updated time.
     taskTrackerTable.updateTime(taskTrackerId);
+//    System.out.println(taskTrackerTable.taskTrackerMap.keySet());
     
+    taskTrackerTable.setTaskTrackerStats(taskTrackerId, hbm.getTaskTrackerStats());
+//    TaskTrackerStats stats = taskTrackerTable.getTaskTrackerStats(taskTrackerId);
+//    stats.setMapTaskSlot(hbm.getMapTaskSlot());
+//    stats.setReducePreprocessSlot(hbm.getReducePreprocessTaskSlot());
+//    stats.setReduceTaskSlot(hbm.getReduceTaskSlot());
     return true;
   }
 }

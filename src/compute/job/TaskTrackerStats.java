@@ -1,6 +1,8 @@
 package compute.job;
 
-public class TaskTrackerStats {
+import java.io.Serializable;
+
+public class TaskTrackerStats implements Serializable{
   int mapTaskSlot;
   int reduceTaskSlot;
   int reducePreprcoessTaskSlot;
@@ -12,4 +14,8 @@ public class TaskTrackerStats {
   public int getMapTaskSlot(){return mapTaskSlot;}
   public int getReduceTaskSlot(){return reduceTaskSlot;}
   public int getReducePreprcoessSlot(){return reducePreprcoessTaskSlot;}
+  
+  public void setMapTaskSlot(int mapTaskSlot){ this.mapTaskSlot = mapTaskSlot;}
+  public void setReduceTaskSlot(int reduceTaskSlot){ this.reduceTaskSlot = reduceTaskSlot;}
+  public void setReducePreprocessSlot(int reducePreprcoessTaskSlot){ this.reducePreprcoessTaskSlot = reducePreprcoessTaskSlot;}
 }

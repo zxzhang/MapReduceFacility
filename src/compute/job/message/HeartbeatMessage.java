@@ -2,15 +2,22 @@ package compute.job.message;
 
 import java.io.Serializable;
 
+import compute.job.TaskTrackerStats;
+
 public class HeartbeatMessage implements Serializable{
   int mapTaskSlot;
   int reducePreprocessTaskSlot;
-  int reduceTaskSlot;
+  int reduceTaskSlot; 
+  
+  TaskTrackerStats taskTrackerStats;
   
   public HeartbeatMessage(int mapTaskSlot, int reducePreprocessTaskSlot, int reduceTaskSlot){
+    
     this.mapTaskSlot = mapTaskSlot;
     this.reducePreprocessTaskSlot = reducePreprocessTaskSlot;
     this.reduceTaskSlot = reduceTaskSlot;
+    
+    this.taskTrackerStats = new TaskTrackerStats(mapTaskSlot, reducePreprocessTaskSlot, reduceTaskSlot);
   }
   
   public int getMapTaskSlot(){
@@ -21,5 +28,8 @@ public class HeartbeatMessage implements Serializable{
   }
   public int getReduceTaskSlot(){
     return reduceTaskSlot;
+  }
+  public TaskTrackerStats getTaskTrackerStats(){
+    return taskTrackerStats;
   }
 }

@@ -31,7 +31,7 @@ public class Context {
   }
   
   public boolean write(Object keyout, Object valueout){
-    int reducerId = keyout.hashCode() % AllConfiguration.numOfReducer;
+    int reducerId = Math.abs(keyout.hashCode() % AllConfiguration.numOfReducer);    
     try{
       oosArray[reducerId].writeObject(keyout);
       oosArray[reducerId].writeObject(valueout);

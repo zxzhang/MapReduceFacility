@@ -14,4 +14,7 @@ public class Host {
     if(this.url.equals(host2.getUrl()) && this.port == host2.port){return true;}
     return false;
   }
+  public String toString(){
+    return String.format("[host] %s:%d", url, port);
+  }
 }
