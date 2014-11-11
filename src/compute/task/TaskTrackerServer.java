@@ -107,10 +107,28 @@ public class TaskTrackerServer implements TaskTracker {
     }
   }
   
+  public void checkFinishedMapTask() {
+    Iterator<MapTask> mapTasksIter = finishedMapTasks.iterator();
+    
+    while(mapTasksIter.hasNext()){
+      MapTask task = mapTasksIter.next();
+      try {
+        if(jobTracker.finishMapTask(task)){
+          mapTasksIter.remove();
+        }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+        continue;
+      }
+    }
+    
+  }
+  
   public void run() throws InterruptedException, RemoteException{
     while(true){ // the loop executes each 1 secs
       // check 
       checkPendingMapTask();
+      checkFinishedMapTask();
       
       // report heartbeat
       int mapTaskSlot = getMapTaskSlot();

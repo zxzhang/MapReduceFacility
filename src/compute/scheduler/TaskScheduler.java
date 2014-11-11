@@ -130,6 +130,13 @@ public class TaskScheduler {
     return mapTaskList;
   }
   
+  public boolean finishMapTask(MapTask task){
+    this.pendingMapTasks.remove(task);
+    this.runningMapTasks.remove(task);
+    this.addFinishedMapTask(task);
+    return true;
+  }
+  
   public boolean schedulePendingMapTask() {
     Iterator<MapTask> pendingMapTasks = this.pendingMapTasks.iterator();
     
@@ -168,5 +175,14 @@ public class TaskScheduler {
       }
     }    
     return true;
+  }
+  
+  public String toString(){
+    return String.format(
+        "map[%s][%s][%s]", 
+        this.pendingMapTasks.toString(), 
+        this.runningMapTasks.toString(), 
+        this.finishedMapTasks.toString()
+    );
   }
 }

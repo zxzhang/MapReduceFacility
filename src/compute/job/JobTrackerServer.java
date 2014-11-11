@@ -11,6 +11,9 @@ import compute.job.message.JobTrackMessage;
 import compute.mapper.Mapper;
 import compute.reducer.Reducer;
 import compute.scheduler.TaskScheduler;
+import compute.task.MapTask;
+import compute.task.ReducePreprocessTask;
+import compute.task.ReduceTask;
 import compute.task.TaskTracker;
 import compute.test.DFS;
 import compute.test.FakeDFS;
@@ -66,7 +69,7 @@ public class JobTrackerServer implements JobTracker {
           taskScheduler.schedulePendingMapTask();
         }
         
-        System.out.println(taskTrackerTable);
+        System.out.println(taskScheduler);
         
         Thread.sleep(1000);  
     }
@@ -106,4 +109,16 @@ public class JobTrackerServer implements JobTracker {
 //    stats.setReduceTaskSlot(hbm.getReduceTaskSlot());
     return true;
   }
+  
+  public boolean finishMapTask(MapTask task){
+    this.taskScheduler.finishMapTask(task);
+    return true;
+  }
+  public boolean finishReducePreprocessTask(ReducePreprocessTask task){
+    return true;
+  }
+  public boolean finishReduceTask(ReduceTask task){
+    return true;
+  }
+  
 }
