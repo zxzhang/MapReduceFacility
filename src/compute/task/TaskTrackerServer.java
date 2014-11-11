@@ -9,13 +9,18 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import compute.configure.TaskTrackerConfiguration;
+import compute.job.Job;
 import compute.job.JobTracker;
 import compute.job.message.HeartbeatMessage;
 import compute.task.box.Callback;
 import compute.task.box.MapCallback;
 import compute.task.box.MapTaskBox;
+import compute.task.box.ReducePreprocessCallback;
+import compute.task.box.ReducePreprocessTaskBox;
 import compute.test.DFS;
 import compute.test.FakeDFS;
 import compute.utility.HostUtility;
@@ -46,26 +51,11 @@ public class TaskTrackerServer implements TaskTracker {
   Deque<ReducePreprocessTask> finishedReducePreprocessTasks;
   Deque<ReduceTask> finishedReduceTasks;  
   
-  
-  public void setJobTracker(JobTracker jobTracker){
-    this.jobTracker = jobTracker;
-  }
-  
-  public void setDFS(DFS dfs){
-    this.dfs = dfs;
-  }
-  
-  public String getHostName(){
-    return this.hostName;
-  }
-  
-  public int getPort(){
-    return port;
-  }
-  
-  public String getTaskTrackerId(){
-    return this.taskTrackerId;
-  }
+  public void setJobTracker(JobTracker jobTracker){ this.jobTracker = jobTracker;}
+  public void setDFS(DFS dfs){ this.dfs = dfs;}
+  public String getHostName(){ return this.hostName;}
+  public int getPort(){ return port; }
+  public String getTaskTrackerId(){ return this.taskTrackerId;}
  
   public TaskTrackerServer(String taskTrackerId, String hostName, int port){
     pendingMapTasks = new LinkedList<MapTask>();
@@ -90,58 +80,8 @@ public class TaskTrackerServer implements TaskTracker {
   public void ack(){
     System.out.println("Register OK.");
   }
-  
-  public void checkPendingMapTask(){
-    MapCallback callback = new MapCallback(this);
-    
-    Iterator<MapTask> mapTasksIter = pendingMapTasks.iterator();
-    while(mapTasksIter.hasNext()){
-      MapTask task = mapTasksIter.next();
-      // create MapTaskBox
-      MapTaskBox taskBox = new MapTaskBox(task, dfs, callback);
-      // run taskbox
-      taskBox.start();
-      // move to running MapTask
-      mapTasksIter.remove();
-      addRunningMapTask(task);
-    }
-  }
-  
-  public void checkFinishedMapTask() {
-    Iterator<MapTask> mapTasksIter = finishedMapTasks.iterator();
-    
-    while(mapTasksIter.hasNext()){
-      MapTask task = mapTasksIter.next();
-      try {
-        if(jobTracker.finishMapTask(task)){
-          mapTasksIter.remove();
-        }
-      } catch (RemoteException e) {
-        e.printStackTrace();
-        continue;
-      }
-    }
-    
-  }
-  
-  public void run() throws InterruptedException, RemoteException{
-    while(true){ // the loop executes each 1 secs
-      // check 
-      checkPendingMapTask();
-      checkFinishedMapTask();
-      
-      // report heartbeat
-      int mapTaskSlot = getMapTaskSlot();
-      int reducePreprocessTaskSlot = getReducePreprocessTaskSlot();
-      int reduceTaskSlot = getReduceTaskSlot();
-      this.jobTracker.heartbeat(
-          this.getTaskTrackerId(), 
-          new HeartbeatMessage(mapTaskSlot, reducePreprocessTaskSlot, reduceTaskSlot)
-      );
-      
-      Thread.sleep(1000);  
-    }
-  }
+
+  /****************************************************************************/
   
   public int getMapTaskSlot(){
     return TaskTrackerConfiguration.maxNumOfMapper - (this.pendingMapTasks.size() + this.runningMapTasks.size());
@@ -152,16 +92,8 @@ public class TaskTrackerServer implements TaskTracker {
   public int getReduceTaskSlot(){
     return TaskTrackerConfiguration.maxNumOfReducer - (this.pendingReduceTasks.size() + this.runningReduceTasks.size());
   }
-  
-  public boolean assignMapTask(MapTask task){
-    System.out.println("Assign Task" + task.toString());
     
-    if(getMapTaskSlot()>0){
-      addPendingMapTask(task);
-      return true;
-    }
-    return false;
-  }
+  /****************************************************************************/
   
   public void addPendingMapTask(MapTask task){
     String[] tmp = task.getDfsInputPath().split("/");
@@ -170,6 +102,7 @@ public class TaskTrackerServer implements TaskTracker {
     task.setLocalOutputPath(String.format("%s/%s", localSpacePath, subFilename));
     this.pendingMapTasks.add(task);
   }
+  
   public void removePendingMapTask(MapTask task){
     this.pendingMapTasks.remove(task);
   }
@@ -222,20 +155,113 @@ public class TaskTrackerServer implements TaskTracker {
     this.finishedReduceTasks.remove(task);
   }
   
+  /****************************************************************************/
+  
+  public boolean assignMapTask(MapTask task){
+    System.out.println("Assign Task" + task.toString());
+    
+    if(getMapTaskSlot()>0){
+      addPendingMapTask(task);
+      return true;
+    }
+    return false;
+  }
+  
   public boolean assignReducePreprocessTask(ReducePreprocessTask task){
-    if(getReducePreprocessTaskSlot()>0){
+    if( getReducePreprocessTaskSlot() > 0 &&
+        getMapTaskSlot() == TaskTrackerConfiguration.maxNumOfMapper ){ // if no map tasks running and have slot
+      
       addPendingReducePreprocessTask(task);
       return true;
     }
     return false;
   }
-  public boolean assignReduceTask(ReduceTask task){
-    if(getReduceTaskSlot() > 0){
+  
+  public boolean assignReduceTask(ReduceTask task){ // if no map tasks running and have slot
+    if(getReduceTaskSlot() > 0 &&
+        getMapTaskSlot() == TaskTrackerConfiguration.maxNumOfMapper ){
+      
       addPendingReduceTask(task);
       return true;
     }
     return false;
   }
+  
+
+  /****************************************************************************/
+  
+  public void checkPendingMapTask(){
+    MapCallback callback = new MapCallback(this);
+    
+    Iterator<MapTask> mapTasksIter = pendingMapTasks.iterator();
+    while(mapTasksIter.hasNext()){
+      MapTask task = mapTasksIter.next();
+      // create MapTaskBox
+      MapTaskBox taskBox = new MapTaskBox(task, dfs, callback);
+      // run taskbox
+      taskBox.start();
+      // move to running MapTask
+      mapTasksIter.remove();
+      addRunningMapTask(task);
+    }
+  }
+  
+  public void checkFinishedMapTask() {
+    Iterator<MapTask> mapTasksIter = finishedMapTasks.iterator();
+    
+    while(mapTasksIter.hasNext()){
+      MapTask task = mapTasksIter.next();
+      try {
+        if(jobTracker.finishMapTask(task)){
+          mapTasksIter.remove();
+        }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+        continue;
+      }
+    }
+  }
+  
+  public void checkPendingReducePreprocessTask(){
+    ReducePreprocessCallback callback = new ReducePreprocessCallback(this);
+    
+    Iterator<ReducePreprocessTask> reducePreprocessTaskIter = pendingReducePreprocessTasks.iterator();
+    while(reducePreprocessTaskIter.hasNext()){
+      ReducePreprocessTask task = reducePreprocessTaskIter.next();
+      // create ReduceTaskBox
+      ReducePreprocessTaskBox taskBox = new ReducePreprocessTaskBox(task, callback);
+      // run taskbox
+      taskBox.start();
+      // move to running MapTask
+      reducePreprocessTaskIter.remove();
+      addRunningReducePreprocessTask(task);
+    }
+  }
+  
+  
+  /****************************************************************************/
+  
+  public void run() throws InterruptedException, RemoteException{
+    while(true){ // the loop executes each 1 secs
+      // check 
+      checkPendingMapTask();
+      checkFinishedMapTask();
+      
+          
+      // report heartbeat
+      int mapTaskSlot = getMapTaskSlot();
+      int reducePreprocessTaskSlot = getReducePreprocessTaskSlot();
+      int reduceTaskSlot = getReduceTaskSlot();
+      this.jobTracker.heartbeat(
+          this.getTaskTrackerId(), 
+          new HeartbeatMessage(mapTaskSlot, reducePreprocessTaskSlot, reduceTaskSlot)
+      );
+      
+      Thread.sleep(1000);  
+    }
+  }
+  
+  /****************************************************************************/
   
   public static void main(String[] args) throws Exception{
     String jobTrackerHost = args[0];

@@ -65,9 +65,16 @@ public class JobTrackerServer implements JobTracker {
       while(true){ // the loop executes each 1 secs
         // check 
         if(taskScheduler.getPenndingMapTasksSize()> 0){
-          System.out.println("check pending task....");
+//          System.out.println("check pending task....");
           taskScheduler.schedulePendingMapTask();
         }
+        if(taskScheduler.getFinishedMapTaskSize() > 0){
+          taskScheduler.scheduleFinishedMapTask();
+        }
+        if(taskScheduler.getPenndingReducePreprocessTasksSize() > 0){
+          taskScheduler.schedulePendingReducePreprocessTask();
+        }
+        
         
         System.out.println(taskScheduler);
         

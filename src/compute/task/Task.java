@@ -7,7 +7,7 @@ import compute.utility.Host;
 
 
 enum TaskType{
-  MAP, REDUCE
+  MAP, REDUCE, REDUCEPREPROCESS
 }
 
 public abstract class Task implements Serializable{
@@ -19,7 +19,7 @@ public abstract class Task implements Serializable{
   TaskStatus taskStatus;
   Host host;
   
-  public abstract void updateJob();
+//  public abstract void updateJob();
   public Job getJob(){return this.job;}
   public void setJob(Job job){this.job = job;}
   public TaskType getTaskType(){return taskType;}

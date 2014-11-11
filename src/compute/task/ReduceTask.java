@@ -30,11 +30,5 @@ public class ReduceTask extends Task{
   public Class getReduceClass(){
     return reduceClass;
   }
-
-  @Override
-  public void updateJob() {
-    // TODO Auto-generated method stub
-    
-  }
   
 }

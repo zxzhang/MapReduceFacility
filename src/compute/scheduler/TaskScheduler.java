@@ -2,11 +2,15 @@ package compute.scheduler;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
+import compute.configure.AllConfiguration;
+import compute.configure.TaskTrackerConfiguration;
 import compute.job.Job;
 import compute.job.JobStatus;
 import compute.job.TaskTrackerStats;
@@ -28,11 +32,11 @@ public class TaskScheduler {
   Deque<ReducePreprocessTask> finishedReducePreprocessTasks;
   Deque<ReduceTask> finishedReduceTasks;
   
-
+  Map<Job, List<Host>> job2reducerHostList; 
+  
   DFS dfs;
   TaskTrackerTable taskTrackerTable;
 
-  
   public TaskScheduler(DFS dfs, TaskTrackerTable taskTrackerTable){
     this.pendingMapTasks = new LinkedList<MapTask>();
     this.pendingReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
@@ -49,18 +53,14 @@ public class TaskScheduler {
     this.dfs = dfs;
     this.taskTrackerTable = taskTrackerTable;
 
+    job2reducerHostList = new HashMap<Job, List<Host>>();// the index of the host list is the key hash value
   }
   
-  public int getPenndingMapTasksSize(){
-    return this.pendingMapTasks.size();
-  }
+  public int getPenndingMapTasksSize(){ return this.pendingMapTasks.size();}
+  public int getPenndingReduceTasksSize(){ return this.pendingReduceTasks.size();}
+  public int getPenndingReducePreprocessTasksSize(){ return this.pendingReducePreprocessTasks.size();}
   
-  public int getPenndingReduceTasksSize(){
-    return this.pendingReduceTasks.size();
-  }
-  public int getPenndingReducePreprocessTasksSize(){
-    return this.pendingReducePreprocessTasks.size();
-  }
+  public int getFinishedMapTaskSize(){ return this.finishedMapTasks.size();}
   
   public boolean addPendingMapTask(MapTask task){
     task.setTaskStatus(TaskStatus.PENDING);
@@ -107,6 +107,7 @@ public class TaskScheduler {
     this.finishedReduceTasks.add(task);
     return true;
   }    
+  /****************************************************************************/
   
   List<MapTask> splitJobToMapTaskList(Job job){
     List<MapTask> mapTaskList = new ArrayList<MapTask>();
@@ -131,7 +132,6 @@ public class TaskScheduler {
   }
   
   public boolean finishMapTask(MapTask task){
-//    this.pendingMapTasks.remove(task);
     this.runningMapTasks.remove(task);
     this.addFinishedMapTask(task);
     return true;
@@ -139,9 +139,7 @@ public class TaskScheduler {
   
   public boolean schedulePendingMapTask() {
     Iterator<MapTask> pendingMapTasks = this.pendingMapTasks.iterator();
-    
-//    System.out.println("pendingMapTasks size:" + this.pendingMapTasks.size());
-    
+        
     while(pendingMapTasks.hasNext()){
       MapTask task = pendingMapTasks.next();
       
@@ -163,7 +161,6 @@ public class TaskScheduler {
               pendingMapTasks.remove();
               // add into running queue
               addRunningMapTask(task);
-              
               break; // if success                   
             }
           } catch (RemoteException e) {
@@ -177,12 +174,68 @@ public class TaskScheduler {
     return true;
   }
   
+  public boolean scheduleFinishedMapTask(){
+    Iterator<MapTask> finishedTasks = this.finishedMapTasks.iterator();
+    while(finishedTasks.hasNext()){
+      MapTask task = finishedTasks.next();
+      
+      // generate R pending ReducePreprocess tasks
+      for(int reducerNum = 0; reducerNum < AllConfiguration.numOfReducer; reducerNum++){
+        ReducePreprocessTask reducePreprocessTask = new ReducePreprocessTask(reducerNum, task);
+        this.addPendingReducePreprocessTask(reducePreprocessTask);
+      }
+      
+      finishedTasks.remove();
+    }
+    return true;
+  }
+  
+  /****************************************************************************/
+  public boolean schedulePendingReducePreprocessTask(){
+    Iterator<ReducePreprocessTask> pendingTaskIter = this.pendingReducePreprocessTasks.iterator();
+    while(pendingTaskIter.hasNext()){
+      ReducePreprocessTask task = pendingTaskIter.next();
+      
+      // find host without map tasks  
+      Host reducerHost = taskTrackerTable.getAvaliableReducerHost();
+      if(reducerHost == null){continue;}
+      
+      TaskTracker taskTracker = taskTrackerTable.get(reducerHost);
+      try {
+        if(taskTracker.assignReducePreprocessTask(task)){
+          pendingTaskIter.remove();
+          this.addRunningReducePreprocessTask(task);
+          //update job2reducerHostList
+          this.updateJob2ReducerHostList(task.getJob(), task.getReducerNum(), reducerHost);
+        }
+      } catch (RemoteException e) {
+        System.out.println("Cannot assign ReducePreprocessTask: "+ taskTracker);
+        e.printStackTrace();
+      }
+    }
+    return true;
+  }
+  
+  
+
+  /****************************************************************************/
+
+  public void updateJob2ReducerHostList(Job job, int reducerNum, Host host){
+    if(!job2reducerHostList.containsKey(job)){
+      job2reducerHostList.put(job, new ArrayList<Host>(AllConfiguration.numOfReducer));
+    }
+    this.job2reducerHostList.get(job).add(reducerNum, host);
+  }
+  
   public String toString(){
     return String.format(
-        "map\np: %s\nr: %s\nf: %s", 
+        "map\np: %s\nr: %s\nf: %s\nreduce_pre\np: %s\nr: %s\nf: %s", 
         this.pendingMapTasks.toString(), 
         this.runningMapTasks.toString(), 
-        this.finishedMapTasks.toString()
+        this.finishedMapTasks.toString(),
+        this.pendingReducePreprocessTasks.toString(),
+        this.runningReducePreprocessTasks.toString(),
+        this.finishedReducePreprocessTasks.toString()
     );
   }
 }
