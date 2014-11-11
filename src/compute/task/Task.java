@@ -10,6 +10,9 @@ enum TaskType{
 }
 
 public abstract class Task implements Serializable{
+  static long maxTaskId = 0; 
+  
+  Long taskId; 
   Job job;
   TaskType taskType;
   TaskStatus taskStatus;
@@ -18,4 +21,22 @@ public abstract class Task implements Serializable{
   public TaskType getTaskType(){return taskType;}
   public void setTaskType(TaskType taskType){this.taskType = taskType;}
   public void setTaskStatus(TaskStatus taskStatus){this.taskStatus = taskStatus;}
+  
+  public Task(){
+    this.taskId = Task.maxTaskId;
+    Task.maxTaskId += 1;
+  }
+  
+  public String toString(){
+    return String.format("'%d'%s:%s", taskId, taskType.toString(), taskStatus.toString());
+  }
+  
+  public Long getTaskId(){
+    return taskId;
+  }
+  
+  public boolean equals(Object obj){
+    Task task2 = (Task) obj;
+    return this.getTaskId().equals(task2.getTaskId());
+  }
 }

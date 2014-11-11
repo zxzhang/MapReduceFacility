@@ -11,6 +11,7 @@ public class ReduceTask extends Task{
       String mapperInputPath, 
       String dfsOutputPath, 
       Class reduceClass){
+    super();
     this.mapperHost = mapperHost;
     this.mapperInputPath = mapperInputPath;
     this.dfsOutputPath = dfsOutputPath;

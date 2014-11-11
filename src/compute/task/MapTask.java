@@ -8,6 +8,7 @@ public class MapTask extends Task{
   Class mapperClass;
   
   public MapTask(String dfsInputPath, Class mapperClass){
+    super();
     this.setTaskType(TaskType.MAP);
     this.dfsInputPath = dfsInputPath;
     this.mapperClass = mapperClass;

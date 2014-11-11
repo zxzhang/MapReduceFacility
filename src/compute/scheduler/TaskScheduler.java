@@ -179,7 +179,7 @@ public class TaskScheduler {
   
   public String toString(){
     return String.format(
-        "map[%s][%s][%s]", 
+        "map\np: %s\nr: %s\nf: %s", 
         this.pendingMapTasks.toString(), 
         this.runningMapTasks.toString(), 
         this.finishedMapTasks.toString()
