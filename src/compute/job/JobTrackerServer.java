@@ -100,18 +100,14 @@ public class JobTrackerServer implements JobTracker {
     
     // update TaskTracker updated time.
     taskTrackerTable.updateTime(taskTrackerId);
-//    System.out.println(taskTrackerTable.taskTrackerMap.keySet());
-    
     taskTrackerTable.setTaskTrackerStats(taskTrackerId, hbm.getTaskTrackerStats());
-//    TaskTrackerStats stats = taskTrackerTable.getTaskTrackerStats(taskTrackerId);
-//    stats.setMapTaskSlot(hbm.getMapTaskSlot());
-//    stats.setReducePreprocessSlot(hbm.getReducePreprocessTaskSlot());
-//    stats.setReduceTaskSlot(hbm.getReduceTaskSlot());
+
     return true;
   }
   
   public boolean finishMapTask(MapTask task){
     this.taskScheduler.finishMapTask(task);
+    this.jobTable.updateMapTask(task.getJob().getJobId(), task);
     return true;
   }
   public boolean finishReducePreprocessTask(ReducePreprocessTask task){

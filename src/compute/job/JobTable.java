@@ -9,6 +9,7 @@ import java.util.Map;
 
 import compute.mapper.Mapper;
 import compute.reducer.Reducer;
+import compute.task.MapTask;
 
 class IDGenerator{
   private SecureRandom random = new SecureRandom();
@@ -46,6 +47,13 @@ public class JobTable {
     
     return job;
   }
+  
+  public void updateMapTask(String jobId, MapTask task){
+    Job job = this.get(jobId);
+    job.removeMapTask(task);
+    job.addMapTask(task);
+  }
+  
   
   public Job get(String jobId){
      return tableMap.get(jobId);

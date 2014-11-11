@@ -3,6 +3,7 @@ package compute.task;
 import java.io.Serializable;
 
 import compute.job.Job;
+import compute.utility.Host;
 
 
 enum TaskType{
@@ -16,11 +17,17 @@ public abstract class Task implements Serializable{
   Job job;
   TaskType taskType;
   TaskStatus taskStatus;
+  Host host;
+  
+  public abstract void updateJob();
   public Job getJob(){return this.job;}
   public void setJob(Job job){this.job = job;}
   public TaskType getTaskType(){return taskType;}
   public void setTaskType(TaskType taskType){this.taskType = taskType;}
   public void setTaskStatus(TaskStatus taskStatus){this.taskStatus = taskStatus;}
+  public TaskStatus getTaskStatus(){return taskStatus;}
+  public void setHost(Host host){this.host = host;}
+  public Host getHost(){return host;}
   
   public Task(){
     this.taskId = Task.maxTaskId;

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Queue;
 
 import compute.job.Job;
+import compute.job.JobStatus;
 import compute.job.TaskTrackerStats;
 import compute.job.TaskTrackerTable;
 import compute.task.*;
@@ -27,10 +28,7 @@ public class TaskScheduler {
   Deque<ReducePreprocessTask> finishedReducePreprocessTasks;
   Deque<ReduceTask> finishedReduceTasks;
   
-//  Queue<Task> pendingTasks;
-//  Queue<Task> runningTasks;
-//  Queue<Task> finishedTasks;
-//  
+
   DFS dfs;
   TaskTrackerTable taskTrackerTable;
 
@@ -122,6 +120,8 @@ public class TaskScheduler {
   }
   
   public List<MapTask> addJob(Job job){
+    // set job start to run
+    job.setJobStatus(JobStatus.RUNNING);
     // split job into map tasks. insert them into pending tasks 
     List<MapTask> mapTaskList = splitJobToMapTaskList(job);
     for(MapTask mapTask: mapTaskList){
@@ -131,7 +131,7 @@ public class TaskScheduler {
   }
   
   public boolean finishMapTask(MapTask task){
-    this.pendingMapTasks.remove(task);
+//    this.pendingMapTasks.remove(task);
     this.runningMapTasks.remove(task);
     this.addFinishedMapTask(task);
     return true;

@@ -1,5 +1,6 @@
 package compute.task;
 
+import compute.job.Job;
 import compute.mapper.Mapper;
 
 public class MapTask extends Task{
@@ -12,6 +13,26 @@ public class MapTask extends Task{
     this.setTaskType(TaskType.MAP);
     this.dfsInputPath = dfsInputPath;
     this.mapperClass = mapperClass;
+  }
+  
+  public void updateJob(){
+    System.out.println("updating task");
+    System.out.println(this);
+    System.out.println("before");
+    System.out.println(this.job.mapTasks);
+    
+    if(!this.job.removeMapTask(this)){
+      System.out.println("Cannot update MapTask["+this+"] in Job.");
+    }
+    this.job.addMapTask(this);
+    System.out.println("afters");
+    System.out.println(this.job.mapTasks);
+    
+  }
+  
+  public void setJob(Job job){    
+    this.job = job;
+    job.addMapTask(this);
   }
   
   public String getDfsInputPath(){
