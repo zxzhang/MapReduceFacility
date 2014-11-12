@@ -21,11 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.healthmarketscience.rmiio.RemoteInputStream;
-import com.healthmarketscience.rmiio.RemoteInputStreamServer;
-import com.healthmarketscience.rmiio.RemoteOutputStream;
-import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
-
 import compute.configure.TaskTrackerConfiguration;
 import compute.job.Job;
 import compute.job.JobTracker;
@@ -40,6 +35,7 @@ import compute.task.box.ReducePreprocessCallback;
 import compute.task.box.ReducePreprocessTaskBox;
 import compute.test.DFS;
 import compute.test.FakeDFS;
+import compute.utility.Host;
 import compute.utility.HostUtility;
 import compute.utility.LocalIOUtility;
 
@@ -136,6 +132,11 @@ public class TaskTrackerServer implements TaskTracker {
     this.finishedMapTasks.remove(task);
   }
   public void addPendingReducePreprocessTask(ReducePreprocessTask task){
+    String[] tmp = task.getLocalIntermediateFilePath().split("/");
+    String subFilename = tmp[tmp.length-1];
+    
+    task.setLocalSortedOutputFilePath(String.format("%s/sorted_%s", localSpacePath, subFilename));
+    
     this.pendingReducePreprocessTasks.add(task);
   }
   public void removePendingReducePreprocessTask(ReducePreprocessTask task){
@@ -178,6 +179,8 @@ public class TaskTrackerServer implements TaskTracker {
     System.out.println("Assign Task" + task.toString());
     
     if(getMapTaskSlot()>0){
+      // update host
+      task.setHost(new Host(hostName, port));
       addPendingMapTask(task);
       return true;
     }
@@ -185,6 +188,8 @@ public class TaskTrackerServer implements TaskTracker {
   }
   
   public boolean assignReducePreprocessTask(ReducePreprocessTask task){
+    System.out.println("Assign Task" + task.toString());
+
     if( getReducePreprocessTaskSlot() > 0 &&
         getMapTaskSlot() == TaskTrackerConfiguration.maxNumOfMapper ){ // if no map tasks running and have slot
       
@@ -255,6 +260,21 @@ public class TaskTrackerServer implements TaskTracker {
     }
   }
   
+  public void checkFinishedReducePreprocessTask() {
+    Iterator<ReducePreprocessTask> reducePreprocessTasksIter = finishedReducePreprocessTasks.iterator();
+    
+    while(reducePreprocessTasksIter.hasNext()){
+      ReducePreprocessTask task = reducePreprocessTasksIter.next();
+      try {
+        if(jobTracker.finishReducePreprocessTask(task)){
+          reducePreprocessTasksIter.remove();
+        }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+        continue;
+      }
+    }
+  }
   
   /****************************************************************************/
   
@@ -263,8 +283,9 @@ public class TaskTrackerServer implements TaskTracker {
       // check 
       checkPendingMapTask();
       checkFinishedMapTask();
+      checkPendingReducePreprocessTask();
+      checkFinishedReducePreprocessTask();
       
-          
       // report heartbeat
       int mapTaskSlot = getMapTaskSlot();
       int reducePreprocessTaskSlot = getReducePreprocessTaskSlot();
@@ -302,7 +323,7 @@ public class TaskTrackerServer implements TaskTracker {
       return null;
     }
 
-    if( c < 0){
+    if(c < 0){
       // if no bytes: return null;
       return null;
     }else{

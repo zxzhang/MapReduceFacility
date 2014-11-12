@@ -116,7 +116,9 @@ public class TaskTrackerTable {
   public Host getAvaliableReducerHost(){
     for(TaskTrackerTableItem item: this.taskTrackerMap.values()){
       TaskTrackerStats stats = item.getStats();
-      if(stats.getMapTaskSlot() == 0 && stats.getReducePreprcoessSlot() < TaskTrackerConfiguration.maxNumOfReducePreprocess){
+      System.out.println(stats);
+      if(stats.getMapTaskSlot() == TaskTrackerConfiguration.maxNumOfMapper 
+          && stats.getReducePreprcoessSlot() > 0){
         return item.host;
       }
     }

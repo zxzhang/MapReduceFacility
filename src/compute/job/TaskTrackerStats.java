@@ -18,4 +18,8 @@ public class TaskTrackerStats implements Serializable{
   public void setMapTaskSlot(int mapTaskSlot){ this.mapTaskSlot = mapTaskSlot;}
   public void setReduceTaskSlot(int reduceTaskSlot){ this.reduceTaskSlot = reduceTaskSlot;}
   public void setReducePreprocessSlot(int reducePreprcoessTaskSlot){ this.reducePreprcoessTaskSlot = reducePreprcoessTaskSlot;}
+  
+  public String toString(){
+    return String.format("m: %d\tr_p: %d\tr: %d", mapTaskSlot, reducePreprcoessTaskSlot, reduceTaskSlot);
+  }
 }

@@ -7,7 +7,10 @@ import compute.task.TaskTrackerServer;
 
 public class ReducePreprocessCallback implements Callback{
   TaskTrackerServer taskTracker ;
-  public ReducePreprocessCallback(TaskTracker taskTracker){this.taskTracker = this.taskTracker;}
+  
+  public ReducePreprocessCallback(TaskTrackerServer taskTracker){
+    this.taskTracker = taskTracker;
+  }
   
   @Override
   public void callBack(TaskBox box) {

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import com.healthmarketscience.rmiio.RemoteInputStream;
 
 import compute.job.JobTracker;
 

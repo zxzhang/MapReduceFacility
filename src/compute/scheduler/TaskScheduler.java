@@ -137,6 +137,12 @@ public class TaskScheduler {
     return true;
   }
   
+  public boolean finishReducePreprocessTask(ReducePreprocessTask task){
+    this.runningReducePreprocessTasks.remove(task);
+    this.addFinishedunningReducePreprocessTask(task);
+    return true;
+  }
+  
   public boolean schedulePendingMapTask() {
     Iterator<MapTask> pendingMapTasks = this.pendingMapTasks.iterator();
         
@@ -198,7 +204,10 @@ public class TaskScheduler {
       
       // find host without map tasks  
       Host reducerHost = taskTrackerTable.getAvaliableReducerHost();
-      if(reducerHost == null){continue;}
+      if(reducerHost == null){
+        System.out.println("Cannot find available host.");
+        continue;
+      }
       
       TaskTracker taskTracker = taskTrackerTable.get(reducerHost);
       try {

@@ -1,6 +1,8 @@
 package compute.utility;
 
-public class Host {
+import java.io.Serializable;
+
+public class Host implements Serializable{
   String url;
   int port ;
   public Host(String url, int port){

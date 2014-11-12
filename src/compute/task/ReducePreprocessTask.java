@@ -22,15 +22,19 @@ public class ReducePreprocessTask extends Task{
     
     this.reducerNum = reducerNum;
     this.dataSourceHost = task.getHost();
-    this.localIntermediateFilePath = task.getLocalOutputPath();
-    this.localSortedOutputFilePath = String.format("%s_sorted", task.getLocalOutputPath());
+    // the intermediate file will be "outputfile_{reducerNum}"
+    this.localIntermediateFilePath = String.format("%s_%d", task.getLocalOutputPath(), reducerNum);
+    this.localSortedOutputFilePath = String.format("%s_%d_sorted", task.getLocalOutputPath(), reducerNum);
   
-    this.setJob(job);
+    this.setJob(task.job);
     this.setTaskType(TaskType.REDUCEPREPROCESS);
     this.setTaskStatus(TaskStatus.PENDING);
   }
   
-  
+  public void setJob(Job job){    
+    this.job = job;
+    job.addReducePreprocessTask(this);
+  }
 
 
   

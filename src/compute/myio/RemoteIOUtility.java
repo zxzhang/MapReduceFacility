@@ -11,13 +11,12 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import com.healthmarketscience.rmiio.RemoteInputStreamClient;
 
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
 public class RemoteIOUtility {
-  public static boolean copyFile(Host remoteHost, String remotePath, String localPath){
+  public static boolean copyFile(Host remoteHost, String remotePath, String localPath){    
     Registry remoteRegistry;
     TaskTracker taskTracker = null;
 

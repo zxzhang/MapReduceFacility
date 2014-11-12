@@ -10,6 +10,7 @@ import java.util.Map;
 import compute.mapper.Mapper;
 import compute.reducer.Reducer;
 import compute.task.MapTask;
+import compute.task.ReducePreprocessTask;
 
 class IDGenerator{
   private SecureRandom random = new SecureRandom();
@@ -52,6 +53,12 @@ public class JobTable {
     Job job = this.get(jobId);
     job.removeMapTask(task);
     job.addMapTask(task);
+  }
+  
+  public void updateReducePreprocessTask(String jobId, ReducePreprocessTask task){
+    Job job = this.get(jobId);
+    job.removeReducePreprocessTask(task);
+    job.addReducePreprocessTask(task);
   }
   
   
