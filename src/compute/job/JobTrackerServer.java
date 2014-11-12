@@ -65,7 +65,6 @@ public class JobTrackerServer implements JobTracker {
       while(true){ // the loop executes each 1 secs
         // check 
         if(taskScheduler.getPenndingMapTasksSize()> 0){
-//          System.out.println("check pending task....");
           taskScheduler.schedulePendingMapTask();
         }
         if(taskScheduler.getFinishedMapTaskSize() > 0){
@@ -75,9 +74,7 @@ public class JobTrackerServer implements JobTracker {
           taskScheduler.schedulePendingReducePreprocessTask();
         }
         
-        
         System.out.println(taskScheduler);
-        
         Thread.sleep(1000);  
     }
   }
@@ -90,7 +87,10 @@ public class JobTrackerServer implements JobTracker {
       JobTrackerServer obj = new JobTrackerServer();
       JobTracker stub = (JobTracker) UnicastRemoteObject.exportObject(obj, 0);
       // Bind the remote object's stub in the RMI registry
-      Registry registry = LocateRegistry.getRegistry();
+//      Registry registry = LocateRegistry.getRegistry();
+      Registry registry = LocateRegistry.getRegistry(1099);
+
+      
       registry.rebind("jobtracker", stub);
       System.out.println("Server ready");
       

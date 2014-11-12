@@ -1,21 +1,38 @@
 package compute.task;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.healthmarketscience.rmiio.RemoteInputStream;
+import com.healthmarketscience.rmiio.RemoteInputStreamServer;
+import com.healthmarketscience.rmiio.RemoteOutputStream;
+import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
+
 import compute.configure.TaskTrackerConfiguration;
 import compute.job.Job;
 import compute.job.JobTracker;
 import compute.job.message.HeartbeatMessage;
+import compute.myio.RMIInputStream;
+import compute.myio.RMIInputStreamImpl;
+import compute.myio.RMIInputStreamInterf;
 import compute.task.box.Callback;
 import compute.task.box.MapCallback;
 import compute.task.box.MapTaskBox;
@@ -263,6 +280,41 @@ public class TaskTrackerServer implements TaskTracker {
   
   /****************************************************************************/
   
+  public byte[] getByte(String filename, long pos, int length){
+    byte[] b = new byte[length];
+    RandomAccessFile r = null;
+    try {
+      r = new RandomAccessFile(new File(filename), "r");
+    } catch (FileNotFoundException e1) {
+      System.out.println("Cannot find file: " + filename);
+      e1.printStackTrace();
+      return null;
+    }
+    // read file
+    int c = -1;
+    try {
+      r.seek(pos);
+      c = r.read(b);
+      r.close();
+    } catch (IOException e) {
+      System.out.println("Cannot read file: "+ filename);
+      e.printStackTrace();
+      return null;
+    }
+
+    if( c < 0){
+      // if no bytes: return null;
+      return null;
+    }else{
+      if( c < length){
+        b = Arrays.copyOf(b, c);
+      }
+      return b;
+    }
+  }
+  
+  /****************************************************************************/
+  
   public static void main(String[] args) throws Exception{
     String jobTrackerHost = args[0];
     int jobTrackerPort = 1099;
@@ -273,6 +325,7 @@ public class TaskTrackerServer implements TaskTracker {
     TaskTrackerServer taskTracker = new TaskTrackerServer(localHostName, localHostName, taskTrackerPort);
     TaskTracker stub = (TaskTracker)UnicastRemoteObject.exportObject(taskTracker, 0);
     Registry registry = LocateRegistry.getRegistry(taskTrackerPort);
+
     registry.rebind("tasktracker", stub);
     
     // args[0] = job tracker host
@@ -297,5 +350,6 @@ public class TaskTrackerServer implements TaskTracker {
     taskTracker.run();
   }
 
+  
 
 }
