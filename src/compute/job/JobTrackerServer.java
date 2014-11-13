@@ -70,10 +70,13 @@ public class JobTrackerServer implements JobTracker {
         if(taskScheduler.getFinishedMapTaskSize() > 0){
           taskScheduler.scheduleFinishedMapTask();
         }
-        System.out.println("size( reducePreprocessTasks )... = " + taskScheduler.getPenndingReducePreprocessTasksSize());
+        
         if(taskScheduler.getPenndingReducePreprocessTasksSize() > 0){
-          System.out.println("Scheduling reducePreprocessTasks ... ");
           taskScheduler.schedulePendingReducePreprocessTask();
+        }
+        
+        if(taskScheduler.getFinishedReducePreprocessTasksSize() > 0){
+          taskScheduler.scheduleFinishedReducePreprocessTask();
         }
         
         System.out.println(taskScheduler);
@@ -89,7 +92,6 @@ public class JobTrackerServer implements JobTracker {
       JobTrackerServer obj = new JobTrackerServer();
       JobTracker stub = (JobTracker) UnicastRemoteObject.exportObject(obj, 0);
       // Bind the remote object's stub in the RMI registry
-//      Registry registry = LocateRegistry.getRegistry();
       Registry registry = LocateRegistry.getRegistry(1099);
 
       

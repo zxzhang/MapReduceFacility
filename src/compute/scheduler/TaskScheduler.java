@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TreeMap;
 
 import compute.configure.AllConfiguration;
 import compute.configure.TaskTrackerConfiguration;
@@ -18,6 +19,7 @@ import compute.job.TaskTrackerTable;
 import compute.task.*;
 import compute.test.DFS;
 import compute.utility.Host;
+import compute.utility.Pair;
 
 public class TaskScheduler {
   Deque<MapTask> pendingMapTasks;
@@ -61,6 +63,7 @@ public class TaskScheduler {
   public int getPenndingReducePreprocessTasksSize(){ return this.pendingReducePreprocessTasks.size();}
   
   public int getFinishedMapTaskSize(){ return this.finishedMapTasks.size();}
+  public int getFinishedReducePreprocessTasksSize(){ return this.finishedReducePreprocessTasks.size();}
   
   public boolean addPendingMapTask(MapTask task){
     task.setTaskStatus(TaskStatus.PENDING);
@@ -87,22 +90,26 @@ public class TaskScheduler {
     this.runningReducePreprocessTasks.add(task);
     return true;
   }
-  public boolean addFinishedunningReducePreprocessTask(ReducePreprocessTask task){
+  public boolean addFinishedReducePreprocessTask(ReducePreprocessTask task){
     task.setTaskStatus(TaskStatus.FINISHED);
     this.finishedReducePreprocessTasks.add(task);
     return true;
   }  
-  public boolean addPendingReducePreprocessTask(ReduceTask task){
+  public boolean removeFinishedReducePreprocessTask(ReducePreprocessTask task){
+    this.finishedReducePreprocessTasks.remove(task);
+    return true;
+  }
+  public boolean addPendingReduceTask(ReduceTask task){
     task.setTaskStatus(TaskStatus.PENDING);
     this.pendingReduceTasks.add(task);
     return true;
   }
-  public boolean addRunningReducePreprocessTask(ReduceTask task){
+  public boolean addRunningReduceTask(ReduceTask task){
     task.setTaskStatus(TaskStatus.RUNNING);
     this.runningReduceTasks.add(task);
     return true;
   }
-  public boolean addFinishedunningReducePreprocessTask(ReduceTask task){
+  public boolean addFinishedunningReduceTask(ReduceTask task){
     task.setTaskStatus(TaskStatus.FINISHED);
     this.finishedReduceTasks.add(task);
     return true;
@@ -139,7 +146,7 @@ public class TaskScheduler {
   
   public boolean finishReducePreprocessTask(ReducePreprocessTask task){
     this.runningReducePreprocessTasks.remove(task);
-    this.addFinishedunningReducePreprocessTask(task);
+    this.addFinishedReducePreprocessTask(task);
     return true;
   }
   
@@ -158,9 +165,7 @@ public class TaskScheduler {
         if(stats != null && stats.getMapTaskSlot() > 0){
           // assign task
           TaskTracker taskTracker = taskTrackerTable.get(host);  
-          
-          System.out.println("taskTracker: " + host);
-          
+                    
           try {
             if(taskTracker.assignMapTask(task)){
               // remove from pending queue
@@ -205,7 +210,6 @@ public class TaskScheduler {
       // find host without map tasks  
       Host reducerHost = taskTrackerTable.getAvaliableReducerHost();
       if(reducerHost == null){
-        System.out.println("Cannot find available host.");
         continue;
       }
       
@@ -225,7 +229,48 @@ public class TaskScheduler {
     return true;
   }
   
-  
+  public boolean scheduleFinishedReducePreprocessTask(){
+    // for each job , if some one has collected all map_{$i} file -> run reduce
+    Map<Pair<Job, Integer>, List<ReducePreprocessTask>> jobReducerNum2ReducePreprocessTasks = 
+        new HashMap<Pair<Job,Integer>, List<ReducePreprocessTask>>();
+    for(ReducePreprocessTask task: finishedReducePreprocessTasks){
+      Integer reducerNum = task.getReducerNum();
+      Pair<Job, Integer> pair = new Pair<Job, Integer>(task.getJob(), reducerNum);
+
+      if(!jobReducerNum2ReducePreprocessTasks.containsKey(pair)){
+        jobReducerNum2ReducePreprocessTasks.put(pair, new ArrayList<ReducePreprocessTask>());
+      }
+      jobReducerNum2ReducePreprocessTasks.get(pair).add(task);
+    }
+    
+    // check if reduce task can start or not
+    for(Pair<Job, Integer> pair: jobReducerNum2ReducePreprocessTasks.keySet()){
+      Job job = pair.getFirst();
+      Integer reducerNum = pair.getSecond();
+      List<ReducePreprocessTask> allTasks = jobReducerNum2ReducePreprocessTasks.get(pair);
+
+      if(allTasks.size() == job.mapTasks.size()){ // all reducePreprocess tasks are finished
+        
+        // prepare localInputPaths
+        List<String> localInputPaths = new ArrayList<String>();
+        for(ReducePreprocessTask reducePreprocessTask : allTasks){
+          localInputPaths.add(reducePreprocessTask.getLocalSortedOutputFilePath());
+        }
+        
+        // add into ReduceTask
+        ReduceTask reduceTask = new ReduceTask(reducerNum, job.getDfsOutputPath(), job.getReducer(), localInputPaths, job);
+        this.addPendingReduceTask(reduceTask);
+        
+        // remove reducePreprocessTask
+        for(ReducePreprocessTask reducePreprocessTask: allTasks){
+          removeFinishedReducePreprocessTask(reducePreprocessTask);
+        }
+
+      }
+     
+    }
+    return true;
+  }
 
   /****************************************************************************/
 
@@ -238,13 +283,16 @@ public class TaskScheduler {
   
   public String toString(){
     return String.format(
-        "map\np: %s\nr: %s\nf: %s\nreduce_pre\np: %s\nr: %s\nf: %s", 
+        "map\np: %s\nr: %s\nf: %s\n"+ "reduce_pre\np: %s\nr: %s\nf: %s\n" +"reduce\np: %s\nr: %s\nf: %s\n", 
         this.pendingMapTasks.toString(), 
         this.runningMapTasks.toString(), 
         this.finishedMapTasks.toString(),
         this.pendingReducePreprocessTasks.toString(),
         this.runningReducePreprocessTasks.toString(),
-        this.finishedReducePreprocessTasks.toString()
+        this.finishedReducePreprocessTasks.toString(),
+        this.pendingReduceTasks.toString(),
+        this.runningReduceTasks.toString(),
+        this.finishedReduceTasks.toString()
     );
   }
 }

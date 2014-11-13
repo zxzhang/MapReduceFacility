@@ -24,7 +24,9 @@ public class Job implements Serializable{
   public JobStatus getJobStatus(){return this.jobStatus;}
   public void setJobStatus(JobStatus js){this.jobStatus = js;} 
   public String getDfsInputPath(){ return this.dfsInputPath;}
+  public String getDfsOutputPath(){return this.dfsOutputPath;}
   public Class<? extends Mapper> getMapper(){return this.mapper;}
+  public Class<? extends Reducer> getReducer(){return this.reducer;}
   
   public List<MapTask> mapTasks;
   public List<ReduceTask> reduceTasks;
@@ -44,10 +46,18 @@ public class Job implements Serializable{
     this.splitInputFiles = splitInputFiles;
     this.mapper = mapper;
     this.reducer = reducer;
-  
+    
     this.mapTasks = new LinkedList<MapTask>();
     this.reducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
     this.reduceTasks = new LinkedList<ReduceTask>();
   }
   
+  public boolean equals(Object obj){
+    Job job2 =(Job) obj;
+    if(job2.jobId.equals(this.jobId)) return true;
+    return false;
+  }
+  public int hashCode(){
+    return this.jobId.hashCode();
+  }
 }

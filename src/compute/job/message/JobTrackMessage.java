@@ -30,7 +30,6 @@ public class JobTrackMessage implements Serializable {
   private double calFinishedTask(List<? extends Task> tasks){
     double num = 0;
     for(Task t: tasks){
-      System.out.println(t);
       if(t.getTaskStatus() == TaskStatus.FINISHED){
         num +=1.0;
       }

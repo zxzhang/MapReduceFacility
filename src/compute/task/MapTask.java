@@ -15,12 +15,7 @@ public class MapTask extends Task{
     this.mapperClass = mapperClass;
   }
   
-  public void updateJob(){
-    System.out.println("updating task");
-    System.out.println(this);
-    System.out.println("before");
-    System.out.println(this.job.mapTasks);
-    
+  public void updateJob(){    
     if(!this.job.removeMapTask(this)){
       System.out.println("Cannot update MapTask["+this+"] in Job.");
     }

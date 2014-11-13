@@ -19,7 +19,7 @@ public class ReducePreprocessTask extends Task{
   
   public ReducePreprocessTask(int reducerNum, MapTask task){
     super();
-    
+
     this.reducerNum = reducerNum;
     this.dataSourceHost = task.getHost();
     // the intermediate file will be "outputfile_{reducerNum}"
