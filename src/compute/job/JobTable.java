@@ -42,9 +42,9 @@ public class JobTable {
       }
     }
     
-    Job job = new Job(jobId, dfsInputPath, mapper, reducer, splitInputFiles);
+    Job job = new Job(dfsInputPath, mapper, reducer, splitInputFiles);
     // insert into tableMap
-    tableMap.put(jobId, job); 
+    tableMap.put(job.getJobId(), job); 
     
     return job;
   }

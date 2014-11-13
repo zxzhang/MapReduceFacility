@@ -13,6 +13,9 @@ import compute.task.ReduceTask;
 
 
 public class Job implements Serializable{
+  
+  static long maxJobId = 0;
+  
   String jobId;
   JobStatus jobStatus;
   String dfsInputPath; 
@@ -39,8 +42,16 @@ public class Job implements Serializable{
   public void addReduceTask(ReduceTask task){this.reduceTasks.add(task);}
   public boolean removeReduceTask(ReduceTask task){return this.reduceTasks.remove(task);}
   
-  public Job(String jobId, String dfsInputPath, Class<? extends Mapper> mapper, Class<? extends Reducer> reducer, List<String> splitInputFiles){
-    this.jobId = jobId;
+  public String getNewJobId(){
+    String newId =  Long.toString(maxJobId);
+    maxJobId += 1 ;
+    return newId;
+  }
+  
+  public Job( String dfsInputPath, Class<? extends Mapper> mapper, Class<? extends Reducer> reducer, List<String> splitInputFiles){
+    
+    this.jobId = getNewJobId();
+    
     this.jobStatus = JobStatus.PENDING;
     this.dfsInputPath = dfsInputPath;
     this.splitInputFiles = splitInputFiles;
