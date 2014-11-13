@@ -15,7 +15,6 @@ kill:
 rmi:
 	cd bin/; rmiregistry &
 run:
-	#killall java
 	java -cp $(classpath) compute.job.JobTrackerServer > job_server.log & 
 	@sleep 1
 	java -cp $(classpath) compute.task.TaskTrackerServer localhost $(rmiregistryPort) > task_server.log &
