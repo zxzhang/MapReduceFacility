@@ -27,4 +27,5 @@ public interface JobTracker extends Remote {
   public boolean finishMapTask(MapTask task)  throws RemoteException;
   public boolean finishReducePreprocessTask(ReducePreprocessTask task)  throws RemoteException;
   public boolean finishReduceTask(ReduceTask task)  throws RemoteException;
+  public boolean deleteJob(String jobId) throws RemoteException;
 }

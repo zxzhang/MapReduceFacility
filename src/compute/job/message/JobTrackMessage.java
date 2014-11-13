@@ -18,8 +18,11 @@ public class JobTrackMessage implements Serializable {
   double maskTaskFinishedRatio;
   double reducePreprocessFinishedRatio;
   double reduceTaskFinishedRatio;
+  String dfsOutputPath;
   
-  
+  public String getDfsOutputPath(){
+    return dfsOutputPath;
+  }
   public JobStatus getJobStatus(){
     return jobStatus;
   }
@@ -63,6 +66,7 @@ public class JobTrackMessage implements Serializable {
     this.maskTaskFinishedRatio = calMaskTaskFinishedRatio(job.mapTasks);
     this.reducePreprocessFinishedRatio = calReducePreprocessTaskFinishedRatio(job.reducePreprocessTasks);
     this.reduceTaskFinishedRatio = calReduceTaskFinishedRatio(job.reduceTasks);
+    this.dfsOutputPath = job.getDfsOutputPath();
   }
   public String toString(){
     return String.format("[%s]-[%s][map: %.0f%%][sort: %.0f%%][reduce: %.0f%%]", 

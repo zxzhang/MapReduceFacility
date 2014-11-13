@@ -6,6 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
+import jdk.internal.org.objectweb.asm.util.CheckFieldAdapter;
 import compute.job.message.HeartbeatMessage;
 import compute.job.message.JobTrackMessage;
 import compute.mapper.Mapper;
@@ -43,6 +44,10 @@ public class JobTrackerServer implements JobTracker {
     Job job = jobTable.get(jobId);
     return new JobTrackMessage(job);
   }
+  
+  public boolean deleteJob(String jobId){
+    return jobTable.removeJob(jobId);
+  }
     
   public JobTrackerServer(){
     jobTable = new JobTable();
@@ -78,6 +83,14 @@ public class JobTrackerServer implements JobTracker {
         }
         if(taskScheduler.getPenndingReduceTasksSize() > 0){
           taskScheduler.schedulePendingReduceTask();
+        }
+        if(taskScheduler.getFinishedReduceTaskSize() > 0){
+          List<Job> finishedJobs = taskScheduler.checkFinishedJobs();
+          for(Job job: finishedJobs){
+            if(!jobTable.updateJobStatus(job.getJobId(), JobStatus.COMPLETED)){
+              System.out.println("Cannot update job status: "+job.getJobId());
+            }
+          } 
         }
         
         System.out.println(taskScheduler);

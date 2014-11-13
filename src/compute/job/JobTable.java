@@ -31,6 +31,10 @@ public class JobTable {
     idGenerator = new IDGenerator();
   }
   
+  public boolean removeJob(String jobId){
+    return tableMap.remove(jobId) != null;
+  }
+  
   public Job addJob(String dfsInputPath, String dfsOutputPath, Class< ? extends Mapper> mapper, Class<? extends Reducer> reducer, List<String> splitInputFiles){
     // get job id
     String jobId;
@@ -68,6 +72,13 @@ public class JobTable {
     job.addReduceTask(task);
   }
   
+  public boolean updateJobStatus(String jobId, JobStatus status){
+    Job job = tableMap.get(jobId);
+    if(job == null){return false;}
+    
+    job.setJobStatus(status);
+    return true;
+  }
   
   public Job get(String jobId){
      return tableMap.get(jobId);

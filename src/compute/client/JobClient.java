@@ -28,6 +28,8 @@ public class JobClient {
       System.out.println(jtm);
       
       if(jtm.getJobStatus() == JobStatus.COMPLETED){
+        System.out.println("The job is complepted, and the result is on the DFS: "+ jtm.getDfsOutputPath());
+        jobTracker.deleteJob(jobId);
         break;
       }else if(jtm.getJobStatus() == JobStatus.PENDING){
         continue;
