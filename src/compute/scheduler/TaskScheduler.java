@@ -109,7 +109,7 @@ public class TaskScheduler {
     this.runningReduceTasks.add(task);
     return true;
   }
-  public boolean addFinishedunningReduceTask(ReduceTask task){
+  public boolean addFinishedReduceTask(ReduceTask task){
     task.setTaskStatus(TaskStatus.FINISHED);
     this.finishedReduceTasks.add(task);
     return true;
@@ -149,6 +149,14 @@ public class TaskScheduler {
     this.addFinishedReducePreprocessTask(task);
     return true;
   }
+  
+  public boolean finishReduceTask(ReduceTask task){
+    this.runningReduceTasks.remove(task);
+    this.addFinishedReduceTask(task);
+    return true;
+  }
+  
+  /****************************************************************************/
   
   public boolean schedulePendingMapTask() {
     Iterator<MapTask> pendingMapTasks = this.pendingMapTasks.iterator();
@@ -257,6 +265,8 @@ public class TaskScheduler {
           localInputPaths.add(reducePreprocessTask.getLocalSortedOutputFilePath());
         }
         
+//        System.out.println(localInputPaths);
+        
         // add into ReduceTask
         ReduceTask reduceTask = new ReduceTask(reducerNum, job.getDfsOutputPath(), job.getReducer(), localInputPaths, job);
         this.addPendingReduceTask(reduceTask);
@@ -274,11 +284,50 @@ public class TaskScheduler {
 
   /****************************************************************************/
 
+  public boolean schedulePendingReduceTask(){
+    Iterator<ReduceTask> pendingTaskIter = this.pendingReduceTasks.iterator();
+    while(pendingTaskIter.hasNext()){
+      ReduceTask task = pendingTaskIter.next();
+      
+      // find host without map tasks  
+      Host reducerHost = taskTrackerTable.getAvaliableReducerHost();
+      if(reducerHost == null){
+        // cannot find the corresponding Host -> drop it
+        System.out.println("Error: cannot find host for reduce task: "+task);
+        pendingTaskIter.remove();
+        continue;
+      }
+      
+      TaskTracker taskTracker = taskTrackerTable.get(reducerHost);
+      try {
+        if(taskTracker.assignReduceTask(task)){
+          pendingTaskIter.remove();
+          this.addRunningReduceTask(task);
+        }
+      } catch (RemoteException e) {
+        System.out.println("Cannot assign ReduceTask: "+ taskTracker);
+        e.printStackTrace();
+      }
+    }
+    return true;
+  }
+  
+
+  /****************************************************************************/
+
   public void updateJob2ReducerHostList(Job job, int reducerNum, Host host){
     if(!job2reducerHostList.containsKey(job)){
       job2reducerHostList.put(job, new ArrayList<Host>(AllConfiguration.numOfReducer));
     }
     this.job2reducerHostList.get(job).add(reducerNum, host);
+  }
+  
+  public Host getHostByJobReducerNum(Job job, int reducerNum){
+    if(!job2reducerHostList.containsKey(job)){
+      List<Host> hosts = job2reducerHostList.get(job);
+      return hosts.get(reducerNum);
+    }
+    return null;
   }
   
   public String toString(){

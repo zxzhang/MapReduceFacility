@@ -69,14 +69,15 @@ public class JobTrackerServer implements JobTracker {
         }
         if(taskScheduler.getFinishedMapTaskSize() > 0){
           taskScheduler.scheduleFinishedMapTask();
-        }
-        
+        } 
         if(taskScheduler.getPenndingReducePreprocessTasksSize() > 0){
           taskScheduler.schedulePendingReducePreprocessTask();
-        }
-        
+        }        
         if(taskScheduler.getFinishedReducePreprocessTasksSize() > 0){
           taskScheduler.scheduleFinishedReducePreprocessTask();
+        }
+        if(taskScheduler.getPenndingReduceTasksSize() > 0){
+          taskScheduler.schedulePendingReduceTask();
         }
         
         System.out.println(taskScheduler);
@@ -130,6 +131,11 @@ public class JobTrackerServer implements JobTracker {
     return true;
   }
   public boolean finishReduceTask(ReduceTask task){
+    // update taskScheduler
+    this.taskScheduler.finishReduceTask(task);
+    // update jobTable
+    this.jobTable.updateReduceTask(task.getJob().getJobId(), task);
+    
     return true;
   }
   

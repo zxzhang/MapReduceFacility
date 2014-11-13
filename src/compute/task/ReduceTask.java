@@ -20,7 +20,7 @@ public class ReduceTask extends Task{
     this.setTaskType(TaskType.REDUCE);
     this.setJob(job);
     
-    this.dfsOutputPath = dfsOutputPath;
+    this.dfsOutputPath = String.format("%s/%d.out", dfsOutputPath, reducerNum);
     this.reduceClass = reduceClass;
     this.localInputPaths = localInputPaths;
   }

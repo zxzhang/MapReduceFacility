@@ -32,6 +32,7 @@ public class FakeDFS extends DFS {
   }
   
   public DFSWriter getWriter(String dfsPath) throws Exception{
+    
     String filePath = String.format("%s/%s", prefix, dfsPath);
     return new FakeDFSWriter(filePath);
   }

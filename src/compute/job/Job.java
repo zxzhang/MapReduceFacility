@@ -48,12 +48,13 @@ public class Job implements Serializable{
     return newId;
   }
   
-  public Job( String dfsInputPath, Class<? extends Mapper> mapper, Class<? extends Reducer> reducer, List<String> splitInputFiles){
+  public Job( String dfsInputPath, String dfsOutputPath, Class<? extends Mapper> mapper, Class<? extends Reducer> reducer, List<String> splitInputFiles){
     
     this.jobId = getNewJobId();
     
     this.jobStatus = JobStatus.PENDING;
     this.dfsInputPath = dfsInputPath;
+    this.dfsOutputPath = dfsOutputPath;
     this.splitInputFiles = splitInputFiles;
     this.mapper = mapper;
     this.reducer = reducer;

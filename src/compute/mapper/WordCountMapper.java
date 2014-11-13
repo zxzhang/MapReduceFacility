@@ -9,7 +9,7 @@ public class WordCountMapper implements Mapper<String, Long> {
     String word; 
     while (tokenizer.hasMoreTokens()) {
       word = tokenizer.nextToken();
-      context.write(word, 1);
+      context.write(word, new Long(1));
     } 
   }
 }

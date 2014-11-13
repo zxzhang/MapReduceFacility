@@ -1,7 +1,14 @@
 package compute.reducer;
 
-public class OutputCollector<K, V> {
-  void collect(K key, V value){
-    
+import compute.test.DFSWriter;
+
+public class OutputCollector<KEY, VALUE>{
+  DFSWriter dfsWriter;
+  public OutputCollector(DFSWriter dfsWriter){
+    this.dfsWriter = dfsWriter;
+  }
+  
+  void collect(KEY key, VALUE value){
+    this.dfsWriter.println(String.format("%s\t%s", key.toString(), value.toString()));
   }
 }

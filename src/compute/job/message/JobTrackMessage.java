@@ -7,6 +7,7 @@ import compute.job.Job;
 import compute.job.JobStatus;
 import compute.task.MapTask;
 import compute.task.ReducePreprocessTask;
+import compute.task.ReduceTask;
 import compute.task.Task;
 import compute.task.TaskStatus;
 
@@ -49,6 +50,11 @@ public class JobTrackMessage implements Serializable {
     return 100.0 * (calFinishedTask(reducePreprocessTasks)/ ((double) reducePreprocessTasks.size()));
   }
   
+  public double calReduceTaskFinishedRatio(List<ReduceTask> reduceTasks){
+    if(reduceTasks.size() == 0){return 0.0;}
+    
+    return 100.0 * (calFinishedTask(reduceTasks)/ ((double) reduceTasks.size()));
+  }
   
   public JobTrackMessage(Job job){
     // calculate ratio of each kind of job 
@@ -56,7 +62,7 @@ public class JobTrackMessage implements Serializable {
     this.jobStatus = job.getJobStatus();
     this.maskTaskFinishedRatio = calMaskTaskFinishedRatio(job.mapTasks);
     this.reducePreprocessFinishedRatio = calReducePreprocessTaskFinishedRatio(job.reducePreprocessTasks);
-    this.reduceTaskFinishedRatio = 0.0;
+    this.reduceTaskFinishedRatio = calReduceTaskFinishedRatio(job.reduceTasks);
   }
   public String toString(){
     return String.format("[%s]-[%s][map: %.0f%%][sort: %.0f%%][reduce: %.0f%%]", 

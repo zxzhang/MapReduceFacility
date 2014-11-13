@@ -31,8 +31,10 @@ import compute.myio.RMIInputStreamInterf;
 import compute.task.box.Callback;
 import compute.task.box.MapCallback;
 import compute.task.box.MapTaskBox;
+import compute.task.box.ReduceCallback;
 import compute.task.box.ReducePreprocessCallback;
 import compute.task.box.ReducePreprocessTaskBox;
+import compute.task.box.ReduceTaskBox;
 import compute.test.DFS;
 import compute.test.FakeDFS;
 import compute.utility.Host;
@@ -176,9 +178,9 @@ public class TaskTrackerServer implements TaskTracker {
   /****************************************************************************/
   
   public boolean assignMapTask(MapTask task){
-    System.out.println("Assign Task" + task.toString());
-    
     if(getMapTaskSlot()>0){
+      System.out.println("Assign Task" + task.toString());
+
       // update host
       task.setHost(new Host(hostName, port));
       addPendingMapTask(task);
@@ -188,10 +190,10 @@ public class TaskTrackerServer implements TaskTracker {
   }
   
   public boolean assignReducePreprocessTask(ReducePreprocessTask task){
-    System.out.println("Assign Task" + task.toString());
 
     if( getReducePreprocessTaskSlot() > 0 &&
         getMapTaskSlot() == TaskTrackerConfiguration.maxNumOfMapper ){ // if no map tasks running and have slot
+      System.out.println("Assign Task" + task.toString());
       
       addPendingReducePreprocessTask(task);
       return true;
@@ -202,6 +204,7 @@ public class TaskTrackerServer implements TaskTracker {
   public boolean assignReduceTask(ReduceTask task){ // if no map tasks running and have slot
     if(getReduceTaskSlot() > 0 &&
         getMapTaskSlot() == TaskTrackerConfiguration.maxNumOfMapper ){
+      System.out.println("Assign Task" + task.toString());
       
       addPendingReduceTask(task);
       return true;
@@ -276,6 +279,38 @@ public class TaskTrackerServer implements TaskTracker {
     }
   }
   
+  public void checkPendingReduceTask(){
+    ReduceCallback callback = new ReduceCallback(this);
+    
+    Iterator<ReduceTask> reduceTaskIter = pendingReduceTasks.iterator();
+    while(reduceTaskIter.hasNext()){
+      ReduceTask task = reduceTaskIter.next();
+      // create ReduceTaskBox
+      ReduceTaskBox taskBox = new ReduceTaskBox(task, dfs, callback);
+      // run taskbox
+      taskBox.start();
+      // move to running MapTask
+      reduceTaskIter.remove();
+      addRunningReduceTask(task);
+    }
+  }
+
+  public void checkFinishedReduceTask() {
+    Iterator<ReduceTask> reduceTasksIter = finishedReduceTasks.iterator();
+    
+    while(reduceTasksIter.hasNext()){
+      ReduceTask task = reduceTasksIter.next();
+      try {
+        if(jobTracker.finishReduceTask(task)){
+          reduceTasksIter.remove();
+        }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+        continue;
+      }
+    }
+  }
+  
   /****************************************************************************/
   
   public void run() throws InterruptedException, RemoteException{
@@ -285,7 +320,8 @@ public class TaskTrackerServer implements TaskTracker {
       checkFinishedMapTask();
       checkPendingReducePreprocessTask();
       checkFinishedReducePreprocessTask();
-      
+      checkPendingReduceTask();
+      checkFinishedReduceTask();
       // report heartbeat
       int mapTaskSlot = getMapTaskSlot();
       int reducePreprocessTaskSlot = getReducePreprocessTaskSlot();

@@ -19,7 +19,7 @@ public abstract class Task implements Serializable{
   TaskStatus taskStatus;
   Host host;
   
-//  public abstract void updateJob();
+  // need to add a fail function to notify task scheduler something is fail ?
   public Job getJob(){return this.job;}
   public void setJob(Job job){this.job = job;}
   public TaskType getTaskType(){return taskType;}

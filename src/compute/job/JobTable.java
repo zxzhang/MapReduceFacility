@@ -11,6 +11,7 @@ import compute.mapper.Mapper;
 import compute.reducer.Reducer;
 import compute.task.MapTask;
 import compute.task.ReducePreprocessTask;
+import compute.task.ReduceTask;
 
 class IDGenerator{
   private SecureRandom random = new SecureRandom();
@@ -42,7 +43,7 @@ public class JobTable {
       }
     }
     
-    Job job = new Job(dfsInputPath, mapper, reducer, splitInputFiles);
+    Job job = new Job(dfsInputPath, dfsOutputPath, mapper, reducer, splitInputFiles);
     // insert into tableMap
     tableMap.put(job.getJobId(), job); 
     
@@ -59,6 +60,12 @@ public class JobTable {
     Job job = this.get(jobId);
     job.removeReducePreprocessTask(task);
     job.addReducePreprocessTask(task);
+  }
+  
+  public void updateReduceTask(String jobId, ReduceTask task){
+    Job job = this.get(jobId);
+    job.removeReduceTask(task);
+    job.addReduceTask(task);
   }
   
   

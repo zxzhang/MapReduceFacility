@@ -1,5 +1,7 @@
 package compute.task.box;
 
+import java.lang.reflect.Type;
+
 import compute.mapper.Context;
 import compute.mapper.Mapper;
 import compute.task.MapTask;
@@ -28,6 +30,8 @@ public class MapTaskBox extends TaskBox{
       e1.printStackTrace();
     }
     
+    Type mySuperclass = mapper.getClass().getGenericSuperclass();
+
     // create Context 
     Context context = new Context(task.getLocalOutputPath());
     
