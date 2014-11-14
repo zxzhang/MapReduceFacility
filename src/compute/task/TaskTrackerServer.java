@@ -66,13 +66,15 @@ public class TaskTrackerServer implements TaskTracker {
   Deque<ReducePreprocessTask> finishedReducePreprocessTasks;
   Deque<ReduceTask> finishedReduceTasks;  
   
+  
   public void setJobTracker(JobTracker jobTracker){ this.jobTracker = jobTracker;}
   public void setDFS(DFS dfs){ this.dfs = dfs;}
   public String getHostName(){ return this.hostName;}
   public int getPort(){ return port; }
   public String getTaskTrackerId(){ return this.taskTrackerId;}
- 
-  public TaskTrackerServer(String taskTrackerId, String hostName, int port){
+  public void setTaskTrackerId(String taskTrackerId){ this.taskTrackerId = taskTrackerId;} 
+  
+  public TaskTrackerServer(String hostName, int port){
     pendingMapTasks = new LinkedList<MapTask>();
     pendingReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
     pendingReduceTasks = new LinkedList<ReduceTask>();
@@ -85,7 +87,7 @@ public class TaskTrackerServer implements TaskTracker {
     finishedReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
     finishedReduceTasks = new LinkedList<ReduceTask>();  
     
-    this.taskTrackerId = taskTrackerId;
+//    this.taskTrackerId = taskTrackerId;
     this.hostName = hostName;
     this.port = port;
 
@@ -379,7 +381,7 @@ public class TaskTrackerServer implements TaskTracker {
     
     // launch local server for task tracker
     String localHostName = HostUtility.getHostName();
-    TaskTrackerServer taskTracker = new TaskTrackerServer(localHostName, localHostName, taskTrackerPort);
+    TaskTrackerServer taskTracker = new TaskTrackerServer(localHostName, taskTrackerPort);
     TaskTracker stub = (TaskTracker)UnicastRemoteObject.exportObject(taskTracker, 0);
     Registry registry = LocateRegistry.getRegistry(taskTrackerPort);
 
@@ -390,10 +392,13 @@ public class TaskTrackerServer implements TaskTracker {
     try {
         Registry remoteRegistry = LocateRegistry.getRegistry(jobTrackerHost, jobTrackerPort);
         JobTracker jobTracker = (JobTracker) remoteRegistry.lookup("jobtracker");
-        if(!jobTracker.register(stub)){
+        String taskTrackerId = jobTracker.register(stub);
+        if(taskTrackerId == null){
           System.err.println("Cannot register JobTracker: " + jobTrackerHost);
           System.exit(0);
-        } 
+        } else{
+          stub.setTaskTrackerId(taskTrackerId);
+        }
         taskTracker.setJobTracker(jobTracker);
     } catch (Exception e) {
         System.err.println("Client exception: " + e.toString());

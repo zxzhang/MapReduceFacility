@@ -1,7 +1,9 @@
 package compute.job;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import compute.configure.AllConfiguration;
@@ -41,13 +43,38 @@ class TaskTrackerTableItem{
   public void setTaskTrackerStats(TaskTrackerStats taskTrackerStats){
     this.taskTrackerStats = taskTrackerStats;
   }
+  
+  public long getLastUpdateTime(){
+    return lastUpdateTime;
+  }
 }
 
 public class TaskTrackerTable {
+  
+  public int MAXTasktrackerId = 0;
+  
   public Map<String, TaskTrackerTableItem> taskTrackerMap;
   
   public TaskTrackerTable(){
     this.taskTrackerMap = new HashMap<String, TaskTrackerTableItem>();
+    MAXTasktrackerId = 0;
+  }
+  
+  public int newTaskTrackerId(){
+    int thisTaskTrackerId = MAXTasktrackerId;
+    MAXTasktrackerId += 1;
+    return thisTaskTrackerId;
+  }
+  
+  public List<TaskTracker> checkDeadTaskTrackers(){
+    List<TaskTracker> deadTaskTrackers = null;
+    for(TaskTrackerTableItem item: this.taskTrackerMap.values()){
+      if((System.currentTimeMillis()/1000 -  item.getLastUpdateTime()) > AllConfiguration.taskTrackerDieOutTime){
+        if(deadTaskTrackers == null){ deadTaskTrackers = new ArrayList<TaskTracker>();}
+        deadTaskTrackers.add(item.getTaskTracker());
+      }
+    }
+    return deadTaskTrackers;
   }
   
   public long updateTime(String taskTrackerId){
@@ -80,10 +107,28 @@ public class TaskTrackerTable {
     this.taskTrackerMap.put(id, new TaskTrackerTableItem(taskTracker, host));
   }
   
+  public void add(TaskTracker taskTracker) throws Exception{
+    String taskTrackerId = Integer.toString(newTaskTrackerId());
+    taskTracker.setTaskTrackerId(taskTrackerId);
+    this.put(taskTrackerId, taskTracker);
+  }
+  
+//  
+//  public void removeAll(List<TaskTracker> taskTrackers){
+//    for(TaskTracker taskTracker : taskTrackers){
+//      this.remove(taskTracker.getTaskTrackerId());
+//    }
+//  }
+//  
+  public void remove(String taskTrackerId)  {
+    this.taskTrackerMap.remove(taskTrackerId);
+  }
+    
   public TaskTracker get(String id){
     TaskTrackerTableItem item = this.taskTrackerMap.get(id);
     return item.getTaskTracker();
   }
+  
   public TaskTracker get(Host host){
     for(TaskTrackerTableItem taskTrackerItem: taskTrackerMap.values()){
 
@@ -94,15 +139,16 @@ public class TaskTrackerTable {
     return null;
   } 
   
+  
   public TaskTrackerStats getTaskTrackerStats(Host host){
     for(TaskTrackerTableItem taskTrackerItem: taskTrackerMap.values()){
-
       if(taskTrackerItem.getHost().equals(host)){
         return taskTrackerItem.getStats();
       }
     }
     return null;
   }
+  
   public TaskTrackerStats getTaskTrackerStats(String taskTrackerId){
     TaskTrackerTableItem item = this.taskTrackerMap.get(taskTrackerId);
     return item.taskTrackerStats;

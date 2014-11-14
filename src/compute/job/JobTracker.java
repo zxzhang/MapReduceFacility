@@ -20,7 +20,7 @@ public interface JobTracker extends Remote {
 
   public JobTrackMessage trackJob(String jobId) throws RemoteException;
   
-  public boolean register(TaskTracker taskTracker) throws RemoteException;
+  public String register(TaskTracker taskTracker) throws RemoteException;
   
   public boolean heartbeat(String taskTrackerId, HeartbeatMessage hbm) throws RemoteException;
   

@@ -56,19 +56,25 @@ public class JobTrackerServer implements JobTracker {
     taskScheduler = new TaskScheduler(dfs, taskTrackerTable);
   }
   
-  public boolean register(TaskTracker taskTracker) throws RemoteException{
+  public String register(TaskTracker taskTracker) throws RemoteException{
     try{
-      taskTrackerTable.put(taskTracker.getTaskTrackerId(), taskTracker);
+      taskTrackerTable.add(taskTracker);
       taskTracker.ack();
-      return true;
+      return taskTracker.getTaskTrackerId();
     }catch(Exception e){
-      return false;
+      return null;
     }
   }
   
   public void run() throws InterruptedException{
-      while(true){ // the loop executes each 1 secs
-        // check 
+      while(true){ // the loop executes each 1 secs        
+        // check task trackers are alive or not
+        List<TaskTracker> deadTaskTrackers = taskTrackerTable.checkDeadTaskTrackers();
+        if(deadTaskTrackers != null && deadTaskTrackers.size() >0 ){
+          
+        }
+        
+        // check tasks
         if(taskScheduler.getPenndingMapTasksSize()> 0){
           taskScheduler.schedulePendingMapTask();
         }
