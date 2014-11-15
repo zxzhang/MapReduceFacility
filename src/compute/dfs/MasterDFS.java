@@ -57,12 +57,16 @@ public class MasterDFS extends DFS {
 
   @Override
   public Host getHost(String dfsPath, int duplicate) {
-    // TODO Auto-generated method stub
-    return null;
+    if (!dirManager.checkFile(dfsPath)) {
+      return null;
+    }
+
+    String slaveId = dirManager.getDistributedFile(dfsPath).getSlaveDir().get(duplicate).getId();
+    return taskTrackerTable.taskTrackerMap.get(slaveId).getHost();
   }
 
   @Override
-  public void finishRead() {    
+  public void finishRead() {
   }
 
   @Override
