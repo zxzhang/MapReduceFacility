@@ -1,10 +1,13 @@
 package compute.task;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -406,7 +409,37 @@ public class TaskTrackerServer implements TaskTracker {
     // run taskTracker
     taskTracker.run();
   }
-
   
+  @Override
+  public BufferedReader getBufferReader(String filename) {
+    return new BufferedReader(new FileReader(filename));
+  }
+  
+  @Override
+  public String readLine(BufferedReader br) {
+    // TODO Auto-generated method stub
+    return br.readLine();
+  }
+  
+  @Override
+  public PrintStream getPrintStream(String filename) {
+    String[] tmp = filename.split("/");
+    StringBuilder sb = new StringBuilder();
+    
+    for(int i = 0; i < tmp.length - 1; i++){
+      sb.append("/").append(tmp[i]);
+    }
+    
+    String dir = sb.toString();
+    File dirf = new File(dir);
+    dirf.mkdirs();
+    
+    return new PrintStream(filename);
+  }
+  
+  @Override
+  public void printLine(PrintStream ps, String line) {
+    ps.println(line);
+  }
 
 }

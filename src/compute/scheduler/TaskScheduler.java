@@ -12,12 +12,12 @@ import java.util.TreeMap;
 
 import compute.configure.AllConfiguration;
 import compute.configure.TaskTrackerConfiguration;
+import compute.dfs.DFS;
 import compute.job.Job;
 import compute.job.JobStatus;
 import compute.job.TaskTrackerStats;
 import compute.job.TaskTrackerTable;
 import compute.task.*;
-import compute.test.DFS;
 import compute.utility.Host;
 import compute.utility.Pair;
 
