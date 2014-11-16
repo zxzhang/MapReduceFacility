@@ -31,7 +31,7 @@ public class JobTrackerServer implements JobTracker {
 
   TaskTrackerTable taskTrackerTable;
 
-  MasterDFS dfs;
+  DFS dfs;
 
   TaskScheduler taskScheduler;
 
