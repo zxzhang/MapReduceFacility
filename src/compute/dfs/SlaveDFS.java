@@ -39,4 +39,24 @@ public class SlaveDFS extends DFS {
   public void addFile(String dfsPath, String localPath) {
     jobTracker.addFile(dfsPath, localPath);
   }
+
+  @Override
+  public void readLock(String dfsPath) {
+    jobTracker.readLock(dfsPath);
+  }
+
+  @Override
+  public void readUnLock(String dfsPath) {
+    jobTracker.readUnLock(dfsPath);
+  }
+
+  @Override
+  public void writeLock(String dfsPath) {
+    jobTracker.writeLock(dfsPath);
+  }
+
+  @Override
+  public void writeUnLock(String dfsPath) {
+    jobTracker.writeUnLock(dfsPath);
+  }
 }

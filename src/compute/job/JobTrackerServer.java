@@ -32,7 +32,7 @@ public class JobTrackerServer implements JobTracker {
 
   TaskScheduler taskScheduler;
 
-  ReadWriteLock readWriteLock = null;
+  // ReadWriteLock readWriteLock = null;
 
   public String submitJob(String dfsInputPath, String dfsOutputPath,
           Class<? extends Mapper> mapper, Class<? extends Reducer> reducer) {
@@ -167,8 +167,6 @@ public class JobTrackerServer implements JobTracker {
       return null;
     }
 
-    this.readWriteLock.readLock();
-
     try {
       return dfs.getReader(dfsPath);
     } catch (Exception e) {
@@ -183,8 +181,6 @@ public class JobTrackerServer implements JobTracker {
     if (dfsPath == null || dfsPath.length() == 0) {
       return null;
     }
-
-    this.readWriteLock.writeLock();
 
     try {
       return dfs.getWriter(dfsPath);
@@ -208,6 +204,26 @@ public class JobTrackerServer implements JobTracker {
   @Override
   public void addFile(String dfsPath, String localPath) {
     this.dfs.addFile(dfsPath, localPath);
+  }
+
+  @Override
+  public void readLock(String dfsPath) {
+    this.dfs.readLock(dfsPath);
+  }
+
+  @Override
+  public void readUnLock(String dfsPath) {
+    this.dfs.readUnLock(dfsPath);
+  }
+
+  @Override
+  public void writeLock(String dfsPath) {
+    this.dfs.writeLock(dfsPath);
+  }
+
+  @Override
+  public void writeUnLock(String dfsPath) {
+    this.dfs.writeUnLock(dfsPath);
   }
 
 }

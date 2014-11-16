@@ -13,7 +13,6 @@ import compute.dfs.iostream.DFSWriter;
 import compute.dfs.iostream.DFSWriterStream;
 import compute.dfs.util.DirManager;
 import compute.dfs.util.DistributedFile;
-import compute.dfs.util.ReadWriteLock;
 import compute.job.TaskTrackerTable;
 import compute.utility.Host;
 
@@ -78,7 +77,7 @@ public class MasterDFS extends DFS {
 
   @Override
   public void addFile(String dfsPath, String localPath) {
-    
+
     addDir(dfsPath);
     FileReader reader;
 
@@ -89,31 +88,34 @@ public class MasterDFS extends DFS {
       return;
     }
 
-    bf  = new BufferedReader(reader);
+    bf = new BufferedReader(reader);
     int numOfLine = 0; // AllConfiguration.blockFileLength;
 
     String line = null;
     DFSWriter writer = null;
 
-    try {
-      while ((line = bf .readLine()) != null) {
+    char end = 'a';
 
+    try {
+
+      while ((line = bf.readLine()) != null) {
         if (numOfLine == 0) {
           if (writer != null) {
-            writer.unlock();
+            writeUnLock(dfsPath + (end - 1));
           }
 
-          writer = getWriter(dfsPath);
-          writer.lock();
+          writer = getWriter(dfsPath + end);
+          writeLock(dfsPath + end);
+          end++;
           numOfLine = AllConfiguration.blockFileLength;
         }
 
         writer.println(line.trim());
-
         numOfLine--;
       }
 
-      writer.unlock();
+      writeUnLock(dfsPath + (end - 1));
+      
     } catch (IOException e) {
       System.out.println(e.getMessage());
       return;
@@ -127,14 +129,54 @@ public class MasterDFS extends DFS {
   private void addDir(String dfsPath) {
     String[] tmp = dfsPath.split("/");
     StringBuilder sb = new StringBuilder();
-    
+
     for (int i = 0; i < tmp.length - 1; i++) {
       sb.append("/");
       sb.append(tmp[i]);
-      
+
       if (!dirManager.containsDir(sb.toString())) {
         dirManager.mkDir(sb.toString());
       }
+    }
+  }
+
+  @Override
+  public void readLock(String dfsPath) {
+    try {
+      this.dirManager.getFile(dfsPath).lockRead();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return;
+    }
+  }
+
+  @Override
+  public void readUnLock(String dfsPath) {
+    try {
+      this.dirManager.getFile(dfsPath).unlockRead();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return;
+    }
+  }
+
+  @Override
+  public void writeLock(String dfsPath) {
+    try {
+      this.dirManager.getFile(dfsPath).lockWrite();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return;
+    }
+  }
+
+  @Override
+  public void writeUnLock(String dfsPath) {
+    try {
+      this.dirManager.getFile(dfsPath).unlockWrite();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return;
     }
   }
 

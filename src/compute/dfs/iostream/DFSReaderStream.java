@@ -6,6 +6,7 @@ import java.util.List;
 import compute.configure.AllConfiguration;
 import compute.dfs.util.DistributedFile;
 import compute.dfs.util.SlaveLocalFile;
+import compute.job.JobTracker;
 import compute.job.TaskTrackerTable;
 import compute.task.TaskTracker;
 
@@ -42,13 +43,13 @@ public class DFSReaderStream extends DFSReader {
   }
 
   @Override
-  public void lock() throws Exception {
-    this.distributedFile.lockRead();
+  public void lock(String dfsPath, JobTracker jobTracker) throws Exception {
+    jobTracker.readLock(dfsPath);
   }
 
   @Override
-  public void unlock() throws Exception {
-    this.distributedFile.unlockRead();
+  public void unlock(String dfsPath, JobTracker jobTracker) throws Exception {
+    jobTracker.readUnLock(dfsPath);
   }
 
 }

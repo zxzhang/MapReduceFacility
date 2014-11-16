@@ -33,10 +33,14 @@ public class DirManager {
     return this.distributedDir;
   }
 
-  public Map<String, DistributedFile> getFile() {
-    return this.distributedFile;
-  }
+  // public Map<String, DistributedFile> getFile() {
+  // return this.distributedFile;
+  // }
 
+  public DistributedFile getFile(String dir) {
+    return this.distributedFile.get(dir);
+  }
+  
   public boolean checkFile(String dir) {
     return distributedFile.containsKey(dir);
   }

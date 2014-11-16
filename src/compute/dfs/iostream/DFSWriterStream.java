@@ -5,8 +5,8 @@ import java.util.List;
 
 import compute.configure.AllConfiguration;
 import compute.dfs.util.DistributedFile;
-import compute.dfs.util.ReadWriteLock;
 import compute.dfs.util.SlaveLocalFile;
+import compute.job.JobTracker;
 import compute.job.TaskTrackerTable;
 import compute.task.TaskTracker;
 
@@ -45,13 +45,13 @@ public class DFSWriterStream extends DFSWriter {
   }
 
   @Override
-  public void lock() throws Exception {
-    this.distributedFile.lockWrite();
+  public void lock(String dfsPath, JobTracker jobTracker) throws Exception {
+    jobTracker.writeLock(dfsPath);
   }
 
   @Override
-  public void unlock() throws Exception {
-    this.distributedFile.unlockWrite();
+  public void unlock(String dfsPath, JobTracker jobTracker) throws Exception {
+    jobTracker.writeUnLock(dfsPath);
   }
 
 }

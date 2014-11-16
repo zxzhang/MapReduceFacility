@@ -44,4 +44,9 @@ public interface JobTracker extends Remote {
   public void addFile(String dfsPath, String localPath);
 
   public boolean deleteJob(String jobId) throws RemoteException;
+  
+  public void readLock(String dfsPath);
+  public void readUnLock(String dfsPath);
+  public void writeLock(String dfsPath);
+  public void writeUnLock(String dfsPath);
 }
