@@ -137,7 +137,7 @@ public class DirManager {
       return null;
     }
 
-    DistributedFile distributedFile = new DistributedFile(new ArrayList<SlaveLocalFile>());
+    DistributedFile distributedFile = new DistributedFile(dfsPath, new ArrayList<SlaveLocalFile>());
 
     List<String> slaveId = new ArrayList<String>();
     for (Entry<String, TaskTrackerTableItem> entry : taskTrackerTable.taskTrackerMap.entrySet()) {

@@ -3,6 +3,8 @@ package compute.dfs.util;
 import java.util.List;
 
 public class DistributedFile {
+  
+  private String dir = null;
 
   private List<SlaveLocalFile> slaveDir = null;
 
@@ -10,10 +12,15 @@ public class DistributedFile {
   
   private ReadWriteLock lock = null;
 
-  public DistributedFile(List<SlaveLocalFile> slaveDir) {
+  public DistributedFile(String dir, List<SlaveLocalFile> slaveDir) {
+    this.dir = dir;
     this.slaveDir = slaveDir;
     this.size = 0;
     this.lock = new ReadWriteLock();
+  }
+  
+  public String getDir() {
+    return this.dir;
   }
   
   public void lockRead() throws Exception {
