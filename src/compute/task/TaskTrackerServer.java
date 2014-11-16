@@ -28,9 +28,9 @@ import compute.configure.TaskTrackerConfiguration;
 import compute.job.Job;
 import compute.job.JobTracker;
 import compute.job.message.HeartbeatMessage;
-import compute.myio.RMIInputStream;
-import compute.myio.RMIInputStreamImpl;
-import compute.myio.RMIInputStreamInterf;
+//import compute.myio.RMIInputStream;
+//import compute.myio.RMIInputStreamImpl;
+//import compute.myio.RMIInputStreamInterf;
 import compute.task.box.Callback;
 import compute.task.box.MapCallback;
 import compute.task.box.MapTaskBox;
@@ -412,13 +412,22 @@ public class TaskTrackerServer implements TaskTracker {
   
   @Override
   public BufferedReader getBufferReader(String filename) {
-    return new BufferedReader(new FileReader(filename));
+    try {
+      return new BufferedReader(new FileReader(filename));
+    } catch (FileNotFoundException e) {
+      System.out.println(e.getMessage());
+      return null;
+    }
   }
   
   @Override
   public String readLine(BufferedReader br) {
-    // TODO Auto-generated method stub
-    return br.readLine();
+    try {
+      return br.readLine();
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+      return null;
+    }
   }
   
   @Override
@@ -434,7 +443,12 @@ public class TaskTrackerServer implements TaskTracker {
     File dirf = new File(dir);
     dirf.mkdirs();
     
-    return new PrintStream(filename);
+    try {
+      return new PrintStream(filename);
+    } catch (FileNotFoundException e) {
+      System.out.println(e.getMessage());
+      return null;
+    }
   }
   
   @Override

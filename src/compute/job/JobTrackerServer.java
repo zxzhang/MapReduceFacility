@@ -11,7 +11,7 @@ import compute.dfs.MasterDFS;
 import compute.dfs.iostream.DFSReader;
 import compute.dfs.iostream.DFSWriter;
 import compute.dfs.util.ReadWriteLock;
-import jdk.internal.org.objectweb.asm.util.CheckFieldAdapter;
+// import jdk.internal.org.objectweb.asm.util.CheckFieldAdapter;
 import compute.job.message.HeartbeatMessage;
 import compute.job.message.JobTrackMessage;
 import compute.mapper.Mapper;
