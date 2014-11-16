@@ -89,13 +89,13 @@ public class DirManager {
       return dirList;
     }
 
-    for (String dfsDir : distributedDir) {
-      if (dfsDir.startsWith(dir)
-              && ((dir.equals("/") && dfsDir.lastIndexOf("/") == 0)
-                      || dfsDir.length() <= dir.length() || dfsDir.charAt(dir.length()) == '/')) {
-        dirList.add(dfsDir);
-      }
-    }
+    // for (String dfsDir : distributedDir) {
+    // if (dfsDir.startsWith(dir)
+    // && ((dir.equals("/") && dfsDir.lastIndexOf("/") == 0)
+    // || dfsDir.length() <= dir.length() || dfsDir.charAt(dir.length()) == '/')) {
+    // dirList.add(dfsDir);
+    // }
+    // }
 
     for (Entry<String, DistributedFile> entry : distributedFile.entrySet()) {
       String dfsDir = entry.getKey();
