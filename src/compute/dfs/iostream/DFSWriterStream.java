@@ -1,6 +1,8 @@
 package compute.dfs.iostream;
 
 import java.io.PrintStream;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import compute.configure.AllConfiguration;
@@ -10,36 +12,54 @@ import compute.job.JobTracker;
 import compute.job.TaskTrackerTable;
 import compute.task.TaskTracker;
 
-public class DFSWriterStream extends DFSWriter {
+public class DFSWriterStream extends DFSWriter implements Serializable {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 5233608056016372838L;
 
   private DistributedFile distributedFile = null;
 
   private TaskTrackerTable taskTrackerTable = null;
 
-  private PrintStream[] ps = null;
+  private long[] ps = null;
 
   private TaskTracker[] taskTrackers = null;
   
   public DFSWriterStream(DistributedFile distributedFile, TaskTrackerTable taskTrackerTable) {
     this.distributedFile = distributedFile;
     this.taskTrackerTable = taskTrackerTable;
-    this.ps = new PrintStream[AllConfiguration.replicate];
+    this.ps = new long[AllConfiguration.replicate];
     this.taskTrackers = new TaskTracker[AllConfiguration.replicate];
     getRemoteTask();
   }
 
   private void getRemoteTask() {
     List<SlaveLocalFile> slave = this.distributedFile.getSlaveDir();
+    
+    System.out.println(this.taskTrackerTable);
+    
     for (int i = 0; i < AllConfiguration.replicate; i++) {
       taskTrackers[i] = taskTrackerTable.get(slave.get(i).getId());
-      ps[i] = taskTrackers[i].getPrintStream(slave.get(i).getLocalDir());
+      try {
+        ps[i] = taskTrackers[i].getPrintStream(slave.get(i).getLocalDir());
+      } catch (RemoteException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
   }
 
   @Override
   public void println(String line) {
     for (int i = 0; i < AllConfiguration.replicate; i++) {
-      taskTrackers[i].printLine(ps[i], line);
+      try {
+        taskTrackers[i].printLine(ps[i], line);
+      } catch (RemoteException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
     distributedFile.addSize(1);
   }

@@ -33,20 +33,20 @@ public interface JobTracker extends Remote {
 
   public boolean finishReduceTask(ReduceTask task) throws RemoteException;
 
-  public DFSReader getReader(String dfsPath);
+  public DFSReader getReader(String dfsPath) throws RemoteException;;
 
-  public DFSWriter getWriter(String dfsPath);
+  public DFSWriter getWriter(String dfsPath) throws RemoteException;;
 
-  public List<String> getLs(String dfsDirPath);
+  public List<String> getLs(String dfsDirPath) throws RemoteException;;
 
-  public Host getHost(String dfsPath, int version);
+  public Host getHost(String dfsPath, int version) throws RemoteException;;
 
-  public void addFile(String dfsPath, String localPath);
+  public void addFile(String dfsPath, String localPath) throws RemoteException;;
 
   public boolean deleteJob(String jobId) throws RemoteException;
   
-  public void readLock(String dfsPath);
-  public void readUnLock(String dfsPath);
-  public void writeLock(String dfsPath);
-  public void writeUnLock(String dfsPath);
+  public void readLock(String dfsPath) throws RemoteException;;
+  public void readUnLock(String dfsPath) throws RemoteException;;
+  public void writeLock(String dfsPath) throws RemoteException;;
+  public void writeUnLock(String dfsPath) throws RemoteException;;
 }

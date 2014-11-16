@@ -1,8 +1,15 @@
 package compute.dfs.iostream;
 
+import java.io.Serializable;
+
 import compute.job.JobTracker;
 
-public abstract class DFSWriter {
+public abstract class DFSWriter implements Serializable {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 5387151202554744379L;
 
   public abstract void println(String line);
 

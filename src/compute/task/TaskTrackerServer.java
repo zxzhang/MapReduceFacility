@@ -19,10 +19,12 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import compute.configure.TaskTrackerConfiguration;
 import compute.dfs.DFS;
@@ -56,6 +58,10 @@ public class TaskTrackerServer implements TaskTracker {
   JobTracker jobTracker;
   String localSpacePath;
   DFS dfs;
+  
+  HashMap<Long, BufferedReader> readerTable = null;
+  HashMap<Long, PrintStream> printTable = null;
+  AtomicLong ioId = null;
   
   Deque<MapTask> pendingMapTasks;
   Deque<ReducePreprocessTask> pendingReducePreprocessTasks;
@@ -93,6 +99,10 @@ public class TaskTrackerServer implements TaskTracker {
     this.port = port;
 
     this.localSpacePath = LocalIOUtility.getLocalSpace(this);
+    
+    this.readerTable = new HashMap<Long, BufferedReader>();
+    this.printTable = new HashMap<Long, PrintStream>();
+    this.ioId = new AtomicLong(0);
   }
   
   public void ack(){
@@ -413,19 +423,22 @@ public class TaskTrackerServer implements TaskTracker {
   }
   
   @Override
-  public BufferedReader getBufferReader(String filename) {
+  public long getBufferReader(String filename) {
+    long id = this.ioId.incrementAndGet();
+    
     try {
-      return new BufferedReader(new FileReader(filename));
+      this.readerTable.put(id, new BufferedReader(new FileReader(filename)));
+      return id;
     } catch (FileNotFoundException e) {
       System.out.println(e.getMessage());
-      return null;
+      return -1;
     }
   }
   
   @Override
-  public String readLine(BufferedReader br) {
+  public String readLine(long br) {
     try {
-      return br.readLine();
+      return this.readerTable.get(br).readLine();
     } catch (IOException e) {
       System.out.println(e.getMessage());
       return null;
@@ -433,7 +446,7 @@ public class TaskTrackerServer implements TaskTracker {
   }
   
   @Override
-  public PrintStream getPrintStream(String filename) {
+  public long getPrintStream(String filename) {
     String[] tmp = filename.split("/");
     StringBuilder sb = new StringBuilder();
     
@@ -445,17 +458,20 @@ public class TaskTrackerServer implements TaskTracker {
     File dirf = new File(dir);
     dirf.mkdirs();
     
+    long id = this.ioId.incrementAndGet();
+    
     try {
-      return new PrintStream(filename);
+      this.printTable.put(id, new PrintStream(filename));
+      return id;
     } catch (FileNotFoundException e) {
       System.out.println(e.getMessage());
-      return null;
+      return -1;
     }
   }
   
   @Override
-  public void printLine(PrintStream ps, String line) {
-    ps.println(line);
+  public void printLine(long ps, String line) {
+    this.printTable.get(ps).println(line);
   }
 
 }

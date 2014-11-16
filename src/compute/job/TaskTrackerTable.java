@@ -1,5 +1,6 @@
 package compute.job;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,7 @@ import compute.configure.TaskTrackerConfiguration;
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
-public class TaskTrackerTable {
+public class TaskTrackerTable implements Serializable {
   public Map<String, TaskTrackerTableItem> taskTrackerMap;
 
   public TaskTrackerTable() {

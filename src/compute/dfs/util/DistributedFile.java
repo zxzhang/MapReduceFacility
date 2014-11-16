@@ -1,15 +1,16 @@
 package compute.dfs.util;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class DistributedFile {
-  
+public class DistributedFile implements Serializable {
+
   private String dir = null;
 
   private List<SlaveLocalFile> slaveDir = null;
 
   private int size = 0;
-  
+
   private ReadWriteLock lock = null;
 
   public DistributedFile(String dir, List<SlaveLocalFile> slaveDir) {
@@ -18,11 +19,11 @@ public class DistributedFile {
     this.size = 0;
     this.lock = new ReadWriteLock();
   }
-  
+
   public String getDir() {
     return this.dir;
   }
-  
+
   public void lockRead() throws Exception {
     this.lock.readLock();
   }
@@ -30,7 +31,7 @@ public class DistributedFile {
   public void unlockRead() throws Exception {
     this.lock.readUnlock();
   }
-  
+
   public void lockWrite() throws Exception {
     this.lock.writeLock();
   }
@@ -82,5 +83,16 @@ public class DistributedFile {
 
   public void addSize(int size) {
     this.size += size;
+  }
+
+  public String toString() {
+    StringBuffer sb = new StringBuffer();
+    sb.append("DIR: ").append(dir).append("\n");
+    for (int i = 0; i < this.slaveDir.size(); i++) {
+      sb.append("File").append(i).append(": ").append(this.slaveDir.get(i).getId()).append('\t')
+              .append(this.slaveDir.get(i).getLocalDir()).append('\n');
+    }
+    
+    return sb.toString();
   }
 }

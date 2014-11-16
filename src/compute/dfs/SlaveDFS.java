@@ -1,5 +1,6 @@
 package compute.dfs;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import compute.dfs.iostream.DFSReader;
@@ -27,36 +28,73 @@ public class SlaveDFS extends DFS {
 
   @Override
   public List<String> ls(String dfsDirPath) {
-    return jobTracker.getLs(dfsDirPath);
+    try {
+      return jobTracker.getLs(dfsDirPath);
+    } catch (RemoteException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
   }
 
   @Override
   public Host getHost(String dfsPath, int version) {
-    return jobTracker.getHost(dfsPath, version);
+    try {
+      return jobTracker.getHost(dfsPath, version);
+    } catch (RemoteException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
   }
 
   @Override
   public void addFile(String dfsPath, String localPath) {
-    jobTracker.addFile(dfsPath, localPath);
+    try {
+      jobTracker.addFile(dfsPath, localPath);
+    } catch (RemoteException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void readLock(String dfsPath) {
-    jobTracker.readLock(dfsPath);
+    try {
+      jobTracker.readLock(dfsPath);
+    } catch (RemoteException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void readUnLock(String dfsPath) {
-    jobTracker.readUnLock(dfsPath);
+    try {
+      jobTracker.readUnLock(dfsPath);
+    } catch (RemoteException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void writeLock(String dfsPath) {
-    jobTracker.writeLock(dfsPath);
+    try {
+      jobTracker.writeLock(dfsPath);
+    } catch (RemoteException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void writeUnLock(String dfsPath) {
-    jobTracker.writeUnLock(dfsPath);
+    try {
+      jobTracker.writeUnLock(dfsPath);
+    } catch (RemoteException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 }

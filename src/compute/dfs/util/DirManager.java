@@ -146,7 +146,7 @@ public class DirManager {
 
     Collections.shuffle(slaveId);
     for (int i = 0; i < AllConfiguration.replicate; i++) {
-      String filename = new Long(fileId.decrementAndGet()).toString();
+      String filename = "tmp" + (new Long(fileId.incrementAndGet()).toString());
       distributedFile.getSlaveDir().add(
               new SlaveLocalFile(slaveId.get(i % slaveId.size()), "tmp/" + filename));
     }
@@ -154,6 +154,21 @@ public class DirManager {
     this.distributedFile.put(dfsPath, distributedFile);
 
     return distributedFile;
+  }
+  
+  public String toString() {
+    StringBuffer sb = new StringBuffer();
+    
+    sb.append("DIR:\n");
+    for (String dir : this.distributedDir) {
+      sb.append(dir).append("\n");
+    }
+    sb.append("FILE:\n");
+    for (Entry<String, DistributedFile> entry : this.distributedFile.entrySet()) {
+      sb.append(entry.getValue().toString());
+    }
+    
+    return sb.toString();
   }
 
 }

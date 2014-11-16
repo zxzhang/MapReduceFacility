@@ -1,6 +1,8 @@
 package compute.dfs.iostream;
 
 import java.io.BufferedReader;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import compute.configure.AllConfiguration;
@@ -10,20 +12,25 @@ import compute.job.JobTracker;
 import compute.job.TaskTrackerTable;
 import compute.task.TaskTracker;
 
-public class DFSReaderStream extends DFSReader {
+public class DFSReaderStream extends DFSReader implements Serializable {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 2234842447848013265L;
 
   private DistributedFile distributedFile = null;
 
   private TaskTrackerTable taskTrackerTable = null;
 
-  private BufferedReader[] br = null;
+  private long[] br = null;
 
   private TaskTracker[] taskTrackers = null;
 
   public DFSReaderStream(DistributedFile distributedFile, TaskTrackerTable taskTrackerTable) {
     this.distributedFile = distributedFile;
     this.taskTrackerTable = taskTrackerTable;
-    this.br = new BufferedReader[AllConfiguration.replicate];
+    this.br = new long[AllConfiguration.replicate];
     this.taskTrackers = new TaskTracker[AllConfiguration.replicate];
     getRemoteTask();
   }
@@ -32,7 +39,12 @@ public class DFSReaderStream extends DFSReader {
     List<SlaveLocalFile> slave = this.distributedFile.getSlaveDir();
     for (int i = 0; i < AllConfiguration.replicate; i++) {
       taskTrackers[i] = taskTrackerTable.get(slave.get(i).getId());
-      br[i] = taskTrackers[i].getBufferReader(slave.get(i).getLocalDir());
+      try {
+        br[i] = taskTrackers[i].getBufferReader(slave.get(i).getLocalDir());
+      } catch (RemoteException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
   }
 

@@ -31,7 +31,7 @@ public class JobTrackerServer implements JobTracker {
 
   TaskTrackerTable taskTrackerTable;
 
-  DFS dfs;
+  MasterDFS dfs;
 
   TaskScheduler taskScheduler;
 
@@ -122,11 +122,11 @@ public class JobTrackerServer implements JobTracker {
       registry.rebind("jobtracker", stub);
       System.out.println("Server ready");
 
-      // obj.run();
+      obj.run();
 
       // /////////////////////////
 
-      obj.startTinyShell();
+      // obj.startTinyShell();
 
       // /////////////////////////
 
@@ -138,7 +138,7 @@ public class JobTrackerServer implements JobTracker {
 
   @Override
   public boolean heartbeat(String taskTrackerId, HeartbeatMessage hbm) throws RemoteException {
-    System.out.println("Heart Beating.: " + taskTrackerId);
+    // System.out.println("Heart Beating.: " + taskTrackerId);
 
     // update TaskTracker updated time.
     taskTrackerTable.updateTime(taskTrackerId);
@@ -269,12 +269,18 @@ public class JobTrackerServer implements JobTracker {
     }
 
     switch (args[0]) {
-      case "slave":
-        System.out.println(this.taskTrackerTable);
+      case "ls":
+        this.dfs.printDir();
         break;
       case "test":
-        this.dfs.addFile("/test/input", "/tmp/test.txt");
+        this.dfs.addFile("/test/input/test.txt", "tmp/test.txt");
         break;
+      case "test1":
+        DFSReader reader = this.dfs.getReader("/test/input/test.txta");
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+          System.out.println(line);
+        }
       default:
         System.out.println("Unknown command! Please input again...");
         break;
