@@ -15,6 +15,7 @@ import compute.configure.TaskTrackerConfiguration;
 import compute.dfs.DFS;
 import compute.job.Job;
 import compute.job.JobStatus;
+import compute.job.JobTable;
 import compute.job.TaskTrackerStats;
 import compute.job.TaskTrackerTable;
 import compute.task.*;
@@ -64,6 +65,7 @@ public class TaskScheduler {
   
   public int getFinishedMapTaskSize(){ return this.finishedMapTasks.size();}
   public int getFinishedReducePreprocessTasksSize(){ return this.finishedReducePreprocessTasks.size();}
+  public int getFinishedReduceTaskSize(){ return this.finishedReduceTasks.size();}
   
   public boolean addPendingMapTask(MapTask task){
     task.setTaskStatus(TaskStatus.PENDING);
@@ -264,9 +266,7 @@ public class TaskScheduler {
         for(ReducePreprocessTask reducePreprocessTask : allTasks){
           localInputPaths.add(reducePreprocessTask.getLocalSortedOutputFilePath());
         }
-        
-//        System.out.println(localInputPaths);
-        
+                
         // add into ReduceTask
         ReduceTask reduceTask = new ReduceTask(reducerNum, job.getDfsOutputPath(), job.getReducer(), localInputPaths, job);
         this.addPendingReduceTask(reduceTask);
@@ -312,6 +312,36 @@ public class TaskScheduler {
     return true;
   }
   
+  public List<Job> checkFinishedJobs(){
+    List<Job> finishedJobs = new ArrayList<Job>();
+    
+    Iterator<ReduceTask> finishedTaskIter = this.finishedReduceTasks.iterator();
+    
+    Map<Job, List<ReduceTask>> job2tasks = new HashMap<Job, List<ReduceTask>>();
+    
+    // check whether the job is finished or not.
+    while(finishedTaskIter.hasNext()){
+      ReduceTask task = finishedTaskIter.next();
+      if(!job2tasks.containsKey(task.getJob())){
+        job2tasks.put(task.getJob(), new ArrayList<ReduceTask>());
+      }
+      job2tasks.get(task.getJob()).add(task);
+    }
+    
+    
+    for(Job job: job2tasks.keySet()){
+      // the job is done
+      if(job2tasks.get(job).size() == AllConfiguration.numOfReducer){
+        // 1. change job status into completed
+        job.setJobStatus(JobStatus.COMPLETED);
+        finishedJobs.add(job);
+        // 2. remove all finished reduce tasks
+        this.finishedReduceTasks.removeAll(job2tasks.get(job));
+      }
+    }
+    
+    return finishedJobs;
+  }
 
   /****************************************************************************/
 
