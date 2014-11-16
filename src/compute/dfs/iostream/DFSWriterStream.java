@@ -37,8 +37,6 @@ public class DFSWriterStream extends DFSWriter implements Serializable {
   private void getRemoteTask() {
     List<SlaveLocalFile> slave = this.distributedFile.getSlaveDir();
 
-    System.out.println(this.taskTrackerTable);
-
     for (int i = 0; i < AllConfiguration.replicate; i++) {
       taskTrackers[i] = taskTrackerTable.get(slave.get(i).getId());
       try {

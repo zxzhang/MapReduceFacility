@@ -34,8 +34,8 @@ public interface TaskTracker extends Remote {
   public long getPrintStream(String filename) throws RemoteException;
 
   public void printLine(long ps, String line) throws RemoteException;
-  
-  public void removeRead(long read);
-  
-  public void removeWrite(long write);
+
+  public void removeRead(long read) throws RemoteException;
+
+  public void removeWrite(long write) throws RemoteException;
 }

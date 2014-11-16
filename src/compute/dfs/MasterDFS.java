@@ -77,11 +77,8 @@ public class MasterDFS extends DFS {
 
   @Override
   public void addFile(String dfsPath, String localPath) {
-
-    System.out.println(dfsPath + '\t' + localPath);
-
     addDir(dfsPath);
-    FileReader reader;
+    FileReader reader = null;
 
     try {
       reader = new FileReader(localPath);
@@ -101,18 +98,17 @@ public class MasterDFS extends DFS {
     try {
 
       while ((line = bf.readLine()) != null) {
-        System.out.println(line);
-
         if (numOfLine == 0) {
           if (writer != null) {
-            writeUnLock(dfsPath + (end - 1));
+            writeUnLock(dfsPath + (char) (end - 1));
           }
 
-          writer = getWriter(dfsPath + end);
+          if (this.dirManager.checkFile(dfsPath + (char) end)) {
+            return;
+          }
 
-          System.out.println(writer);
-
-          writeLock(dfsPath + end);
+          writer = getWriter(dfsPath + (char) end);
+          writeLock(dfsPath + (char) end);
           end++;
           numOfLine = AllConfiguration.blockFileLength;
         }
@@ -121,12 +117,14 @@ public class MasterDFS extends DFS {
         numOfLine--;
       }
 
-      writeUnLock(dfsPath + (end - 1));
+      writeUnLock(dfsPath + (char) (end - 1));
 
     } catch (IOException e) {
+      System.out.println("IO error...");
       System.out.println(e.getMessage());
       return;
     } catch (Exception e) {
+      System.out.println("Exception...");
       System.out.println(e.getMessage());
       return;
     }
@@ -140,8 +138,6 @@ public class MasterDFS extends DFS {
     for (int i = 1; i < tmp.length - 1; i++) {
       sb.append("/");
       sb.append(tmp[i]);
-
-      System.out.println("temp:" + sb.toString());
 
       if (!dirManager.containsDir(sb.toString())) {
         dirManager.mkDir(sb.toString());
@@ -184,6 +180,7 @@ public class MasterDFS extends DFS {
     try {
       this.dirManager.getFile(dfsPath).unlockWrite();
     } catch (Exception e) {
+      System.out.println("Write error...");
       System.out.println(e.getMessage());
       return;
     }

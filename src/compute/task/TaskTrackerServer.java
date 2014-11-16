@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import compute.configure.TaskTrackerConfiguration;
 import compute.dfs.DFS;
 import compute.dfs.SlaveDFS;
+import compute.dfs.iostream.DFSReader;
 import compute.job.Job;
 import compute.job.JobTracker;
 import compute.job.message.HeartbeatMessage;
@@ -376,6 +377,7 @@ public class TaskTrackerServer implements TaskTracker {
   /****************************************************************************/
 
   public void run() throws InterruptedException, RemoteException {
+
     while (true) { // the loop executes each 1 secs
       // check
       checkPendingMapTask();
@@ -392,6 +394,33 @@ public class TaskTrackerServer implements TaskTracker {
               reducePreprocessTaskSlot, reduceTaskSlot));
 
       Thread.sleep(1000);
+
+      // if (count == 10) {
+      // this.dfs.addFile("/test/input/test.txt", "tmp/test.txt");
+      // System.out.println("test");
+      // }
+      //
+      // if (count == 23) {
+      // DFSReader reader = null;
+      // System.out.println("test1");
+      // try {
+      // reader = this.dfs.getReader("/test/input/test.txta");
+      // } catch (Exception e) {
+      // e.printStackTrace();
+      // }
+      //
+      // String line = null;
+      //
+      // try {
+      // while ((line = reader.readLine()) != null) {
+      // System.out.println(line);
+      // }
+      // } catch (Exception e) {
+      // e.printStackTrace();
+      // }
+      // }
+      //
+      // count++;
     }
   }
 
