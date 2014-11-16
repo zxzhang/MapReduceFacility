@@ -5,6 +5,11 @@ import java.util.List;
 
 public class DistributedFile implements Serializable {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 869174308136764079L;
+
   private String dir = null;
 
   private List<SlaveLocalFile> slaveDir = null;
@@ -92,7 +97,7 @@ public class DistributedFile implements Serializable {
       sb.append("File").append(i).append(": ").append(this.slaveDir.get(i).getId()).append('\t')
               .append(this.slaveDir.get(i).getLocalDir()).append('\n');
     }
-    
+
     return sb.toString();
   }
 }

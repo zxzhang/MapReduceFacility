@@ -1,6 +1,5 @@
 package compute.dfs.iostream;
 
-import java.io.BufferedReader;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -62,6 +61,13 @@ public class DFSReaderStream extends DFSReader implements Serializable {
   @Override
   public void unlock(String dfsPath, JobTracker jobTracker) throws Exception {
     jobTracker.readUnLock(dfsPath);
+  }
+
+  @Override
+  public void close() throws Exception {
+    for (int i = 0; i < AllConfiguration.replicate; i++) {
+      taskTrackers[i].removeRead(br[i]);
+    }
   }
 
 }

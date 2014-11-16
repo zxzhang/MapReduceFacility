@@ -109,9 +109,9 @@ public class MasterDFS extends DFS {
           }
 
           writer = getWriter(dfsPath + end);
-          
+
           System.out.println(writer);
-          
+
           writeLock(dfsPath + end);
           end++;
           numOfLine = AllConfiguration.blockFileLength;
@@ -142,7 +142,7 @@ public class MasterDFS extends DFS {
       sb.append(tmp[i]);
 
       System.out.println("temp:" + sb.toString());
-      
+
       if (!dirManager.containsDir(sb.toString())) {
         dirManager.mkDir(sb.toString());
       }

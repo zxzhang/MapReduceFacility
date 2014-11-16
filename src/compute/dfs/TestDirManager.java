@@ -8,10 +8,10 @@ public class TestDirManager {
     obj.printLs("/");
     obj.mkDir("/abc");
     obj.printLs("/");
-    
+
     obj.mkDir("/ab");
     obj.printLs("/");
-    
+
     obj.mkDir("/ab/abc");
     obj.printLs("/ab");
     obj.printLs("/");

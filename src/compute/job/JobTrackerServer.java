@@ -31,7 +31,7 @@ public class JobTrackerServer implements JobTracker {
 
   TaskTrackerTable taskTrackerTable;
 
-  MasterDFS dfs;
+  DFS dfs;
 
   TaskScheduler taskScheduler;
 
@@ -236,54 +236,54 @@ public class JobTrackerServer implements JobTracker {
     this.dfs.writeUnLock(dfsPath);
   }
 
-  public void startTinyShell() throws Exception {
-    System.out.println("15640 project-1 ...");
-
-    // doHelp();
-
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-    while (true) {
-      System.out.print("tsh> ");
-      String command = null;
-
-      try {
-        command = br.readLine();
-      } catch (IOException e) {
-        System.out.println(e.getMessage());
-        System.exit(1);
-      }
-
-      processCommand(command);
-    }
-  }
-
-  private void processCommand(String command) throws Exception {
-    if (command == null) {
-      return;
-    }
-
-    String[] args = command.split("\\s+");
-    if (args.length == 0) {
-      return;
-    }
-
-    switch (args[0]) {
-      case "ls":
-        this.dfs.printDir();
-        break;
-      case "test":
-        this.dfs.addFile("/test/input/test.txt", "tmp/test.txt");
-        break;
-      case "test1":
-        DFSReader reader = this.dfs.getReader("/test/input/test.txta");
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-          System.out.println(line);
-        }
-      default:
-        System.out.println("Unknown command! Please input again...");
-        break;
-    }
-  }
+  // public void startTinyShell() throws Exception {
+  // System.out.println("15640 project-1 ...");
+  //
+  // // doHelp();
+  //
+  // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  //
+  // while (true) {
+  // System.out.print("tsh> ");
+  // String command = null;
+  //
+  // try {
+  // command = br.readLine();
+  // } catch (IOException e) {
+  // System.out.println(e.getMessage());
+  // System.exit(1);
+  // }
+  //
+  // processCommand(command);
+  // }
+  // }
+  //
+  // private void processCommand(String command) throws Exception {
+  // if (command == null) {
+  // return;
+  // }
+  //
+  // String[] args = command.split("\\s+");
+  // if (args.length == 0) {
+  // return;
+  // }
+  //
+  // switch (args[0]) {
+  // case "ls":
+  // this.dfs.printDir();
+  // break;
+  // case "test":
+  // this.dfs.addFile("/test/input/test.txt", "tmp/test.txt");
+  // break;
+  // case "test1":
+  // DFSReader reader = this.dfs.getReader("/test/input/test.txta");
+  // String line = null;
+  // while ((line = reader.readLine()) != null) {
+  // System.out.println(line);
+  // }
+  // default:
+  // System.out.println("Unknown command! Please input again...");
+  // break;
+  // }
+  // }
 }

@@ -40,11 +40,11 @@ public class DirManager {
   public DistributedFile getFile(String dir) {
     return this.distributedFile.get(dir);
   }
-  
+
   public boolean checkFile(String dir) {
     return distributedFile.containsKey(dir);
   }
-  
+
   public boolean containsDir(String dir) {
     return distributedDir.contains(dir);
   }
@@ -96,7 +96,7 @@ public class DirManager {
         dirList.add(dfsDir);
       }
     }
-    
+
     for (Entry<String, DistributedFile> entry : distributedFile.entrySet()) {
       String dfsDir = entry.getKey();
       if (dfsDir.startsWith(dir)
@@ -148,17 +148,18 @@ public class DirManager {
     for (int i = 0; i < AllConfiguration.replicate; i++) {
       String filename = "tmp" + (new Long(fileId.incrementAndGet()).toString());
       distributedFile.getSlaveDir().add(
-              new SlaveLocalFile(slaveId.get(i % slaveId.size()), "tmp/" + filename));
+              new SlaveLocalFile(slaveId.get(i % slaveId.size()), "tmp/"
+                      + slaveId.get(i % slaveId.size()) + '-' + filename));
     }
 
     this.distributedFile.put(dfsPath, distributedFile);
 
     return distributedFile;
   }
-  
+
   public String toString() {
     StringBuffer sb = new StringBuffer();
-    
+
     sb.append("DIR:\n");
     for (String dir : this.distributedDir) {
       sb.append(dir).append("\n");
@@ -167,7 +168,7 @@ public class DirManager {
     for (Entry<String, DistributedFile> entry : this.distributedFile.entrySet()) {
       sb.append(entry.getValue().toString());
     }
-    
+
     return sb.toString();
   }
 

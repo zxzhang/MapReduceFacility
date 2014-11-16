@@ -1,9 +1,11 @@
 package compute.job;
 
+import java.io.Serializable;
+
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
-public class TaskTrackerTableItem {
+public class TaskTrackerTableItem implements Serializable {
 
   TaskTracker taskTracker;
 

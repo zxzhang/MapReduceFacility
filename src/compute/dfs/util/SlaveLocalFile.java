@@ -1,6 +1,13 @@
 package compute.dfs.util;
 
-public class SlaveLocalFile {
+import java.io.Serializable;
+
+public class SlaveLocalFile implements Serializable {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -6821425636482142241L;
 
   private String id = null;
 

@@ -11,9 +11,11 @@ public abstract class DFSWriter implements Serializable {
    */
   private static final long serialVersionUID = 5387151202554744379L;
 
-  public abstract void println(String line);
+  public abstract void println(String line) throws Exception;;
+
+  public abstract void close() throws Exception;
 
   public abstract void lock(String dfsPath, JobTracker jobTracker) throws Exception;
-  
+
   public abstract void unlock(String dfsPath, JobTracker jobTracker) throws Exception;
 }

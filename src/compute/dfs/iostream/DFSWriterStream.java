@@ -1,6 +1,5 @@
 package compute.dfs.iostream;
 
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -26,7 +25,7 @@ public class DFSWriterStream extends DFSWriter implements Serializable {
   private long[] ps = null;
 
   private TaskTracker[] taskTrackers = null;
-  
+
   public DFSWriterStream(DistributedFile distributedFile, TaskTrackerTable taskTrackerTable) {
     this.distributedFile = distributedFile;
     this.taskTrackerTable = taskTrackerTable;
@@ -37,9 +36,9 @@ public class DFSWriterStream extends DFSWriter implements Serializable {
 
   private void getRemoteTask() {
     List<SlaveLocalFile> slave = this.distributedFile.getSlaveDir();
-    
+
     System.out.println(this.taskTrackerTable);
-    
+
     for (int i = 0; i < AllConfiguration.replicate; i++) {
       taskTrackers[i] = taskTrackerTable.get(slave.get(i).getId());
       try {
@@ -52,7 +51,7 @@ public class DFSWriterStream extends DFSWriter implements Serializable {
   }
 
   @Override
-  public void println(String line) {
+  public void println(String line) throws Exception {
     for (int i = 0; i < AllConfiguration.replicate; i++) {
       try {
         taskTrackers[i].printLine(ps[i], line);
@@ -72,6 +71,13 @@ public class DFSWriterStream extends DFSWriter implements Serializable {
   @Override
   public void unlock(String dfsPath, JobTracker jobTracker) throws Exception {
     jobTracker.writeUnLock(dfsPath);
+  }
+
+  @Override
+  public void close() throws Exception {
+    for (int i = 0; i < AllConfiguration.replicate; i++) {
+      taskTrackers[i].removeWrite(ps[i]);
+    }
   }
 
 }

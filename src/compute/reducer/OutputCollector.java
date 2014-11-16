@@ -9,6 +9,10 @@ public class OutputCollector<KEY, VALUE>{
   }
   
   void collect(KEY key, VALUE value){
-    this.dfsWriter.println(String.format("%s\t%s", key.toString(), value.toString()));
+    try {
+      this.dfsWriter.println(String.format("%s\t%s", key.toString(), value.toString()));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
