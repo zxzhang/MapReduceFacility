@@ -7,10 +7,29 @@ public class DistributedFile {
   private List<SlaveLocalFile> slaveDir = null;
 
   private int size = 0;
+  
+  private ReadWriteLock lock = null;
 
   public DistributedFile(List<SlaveLocalFile> slaveDir) {
     this.slaveDir = slaveDir;
     this.size = 0;
+    this.lock = new ReadWriteLock();
+  }
+  
+  public void lockRead() throws Exception {
+    this.lock.readLock();
+  }
+
+  public void unlockRead() throws Exception {
+    this.lock.readUnlock();
+  }
+  
+  public void lockWrite() throws Exception {
+    this.lock.writeLock();
+  }
+
+  public void unlockWrite() throws Exception {
+    this.lock.writeUnlock();
   }
 
   // @Override

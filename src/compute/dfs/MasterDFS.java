@@ -77,16 +77,6 @@ public class MasterDFS extends DFS {
   }
 
   @Override
-  public void finishRead() {
-    ReadWriteLock.getInstance().readUnlock();
-  }
-
-  @Override
-  public void finishWrite() {
-    ReadWriteLock.getInstance().writeUnlock();
-  }
-
-  @Override
   public void addFile(String dfsPath, String localPath) {
     
     addDir(dfsPath);
@@ -110,10 +100,11 @@ public class MasterDFS extends DFS {
 
         if (numOfLine == 0) {
           if (writer != null) {
-            finishWrite();
+            writer.unlock();
           }
 
           writer = getWriter(dfsPath);
+          writer.lock();
           numOfLine = AllConfiguration.blockFileLength;
         }
 
@@ -122,7 +113,7 @@ public class MasterDFS extends DFS {
         numOfLine--;
       }
 
-      finishWrite();
+      writer.unlock();
     } catch (IOException e) {
       System.out.println(e.getMessage());
       return;

@@ -17,8 +17,4 @@ public abstract class DFS {
   public abstract Host getHost(String dfsPath, int version);
   
   public abstract void addFile(String dfsPath, String localPath);
-
-  public abstract void finishRead();
-  
-  public abstract void finishWrite();
 }

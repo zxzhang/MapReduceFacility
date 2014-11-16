@@ -5,6 +5,7 @@ import java.util.List;
 
 import compute.configure.AllConfiguration;
 import compute.dfs.util.DistributedFile;
+import compute.dfs.util.ReadWriteLock;
 import compute.dfs.util.SlaveLocalFile;
 import compute.job.TaskTrackerTable;
 import compute.task.TaskTracker;
@@ -18,7 +19,7 @@ public class DFSWriterStream extends DFSWriter {
   private PrintStream[] ps = null;
 
   private TaskTracker[] taskTrackers = null;
-
+  
   public DFSWriterStream(DistributedFile distributedFile, TaskTrackerTable taskTrackerTable) {
     this.distributedFile = distributedFile;
     this.taskTrackerTable = taskTrackerTable;
@@ -41,6 +42,16 @@ public class DFSWriterStream extends DFSWriter {
       taskTrackers[i].printLine(ps[i], line);
     }
     distributedFile.addSize(1);
+  }
+
+  @Override
+  public void lock() throws Exception {
+    this.distributedFile.lockWrite();
+  }
+
+  @Override
+  public void unlock() throws Exception {
+    this.distributedFile.unlockWrite();
   }
 
 }

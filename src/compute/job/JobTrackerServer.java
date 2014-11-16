@@ -62,7 +62,6 @@ public class JobTrackerServer implements JobTracker {
     taskTrackerTable = new TaskTrackerTable();
     dfs = new MasterDFS(taskTrackerTable);// FakeDFS.getConnection("localhost", 8888);
     taskScheduler = new TaskScheduler(dfs, taskTrackerTable);
-    readWriteLock = ReadWriteLock.getInstance();
   }
 
   public boolean register(TaskTracker taskTracker) throws RemoteException {
@@ -204,18 +203,6 @@ public class JobTrackerServer implements JobTracker {
   @Override
   public Host getHost(String dfsPath, int version) {
     return dfs.getHost(dfsPath, version);
-  }
-
-  @Override
-  public void finishRead() {
-    this.dfs.finishRead();
-    // this.readWriteLock.readUnlock();
-  }
-
-  @Override
-  public void finishWrite() {
-    this.dfs.finishWrite();
-    // this.readWriteLock.writeUnlock();
   }
 
   @Override

@@ -6,15 +6,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 public class ReadWriteLock {
 
-  private static class SingletonHolder {
-    public static ReadWriteLock _instance = new ReadWriteLock();
-  }
-
-  public synchronized static ReadWriteLock getInstance() {
-    return SingletonHolder._instance;
-  }
-
-  private ReadWriteLock() {
+  public ReadWriteLock() {
     this.readWriteLock = new ReentrantReadWriteLock();
     this.ReadLock = readWriteLock.readLock();
     this.WriteLock = readWriteLock.writeLock();

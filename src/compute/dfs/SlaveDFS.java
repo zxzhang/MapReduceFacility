@@ -34,14 +34,6 @@ public class SlaveDFS extends DFS {
   public Host getHost(String dfsPath, int version) {
     return jobTracker.getHost(dfsPath, version);
   }
-  
-  public void finishRead() {
-    jobTracker.finishRead();
-  }
-  
-  public void finishWrite() {
-    jobTracker.finishWrite();
-  }
 
   @Override
   public void addFile(String dfsPath, String localPath) {

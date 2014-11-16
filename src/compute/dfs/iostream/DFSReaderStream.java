@@ -41,4 +41,14 @@ public class DFSReaderStream extends DFSReader {
     return line;
   }
 
+  @Override
+  public void lock() throws Exception {
+    this.distributedFile.lockRead();
+  }
+
+  @Override
+  public void unlock() throws Exception {
+    this.distributedFile.unlockRead();
+  }
+
 }
