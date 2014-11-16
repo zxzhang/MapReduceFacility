@@ -40,6 +40,10 @@ public class DirManager {
   public boolean checkFile(String dir) {
     return distributedFile.containsKey(dir);
   }
+  
+  public boolean containsDir(String dir) {
+    return distributedDir.contains(dir);
+  }
 
   public boolean checkDir(String dir) {
     if (dir == null || dir.length() <= 1) {

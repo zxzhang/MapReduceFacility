@@ -23,6 +23,8 @@ public class MasterDFS extends DFS {
 
   private TaskTrackerTable taskTrackerTable = null;
 
+  private BufferedReader bf = null;
+
   // private ReadWriteLock readWriteLock = null;
 
   public MasterDFS(TaskTrackerTable taskTrackerTable) {
@@ -86,7 +88,8 @@ public class MasterDFS extends DFS {
 
   @Override
   public void addFile(String dfsPath, String localPath) {
-
+    
+    addDir(dfsPath);
     FileReader reader;
 
     try {
@@ -96,29 +99,29 @@ public class MasterDFS extends DFS {
       return;
     }
 
-    BufferedReader bf = new BufferedReader(reader);
+    bf  = new BufferedReader(reader);
     int numOfLine = 0; // AllConfiguration.blockFileLength;
 
     String line = null;
     DFSWriter writer = null;
 
     try {
-      while ((line = bf.readLine()) != null) {
-        
+      while ((line = bf .readLine()) != null) {
+
         if (numOfLine == 0) {
           if (writer != null) {
             finishWrite();
           }
-          
+
           writer = getWriter(dfsPath);
           numOfLine = AllConfiguration.blockFileLength;
         }
-        
+
         writer.println(line.trim());
-        
+
         numOfLine--;
       }
-      
+
       finishWrite();
     } catch (IOException e) {
       System.out.println(e.getMessage());
@@ -128,6 +131,20 @@ public class MasterDFS extends DFS {
       return;
     }
 
+  }
+
+  private void addDir(String dfsPath) {
+    String[] tmp = dfsPath.split("/");
+    StringBuilder sb = new StringBuilder();
+    
+    for (int i = 0; i < tmp.length - 1; i++) {
+      sb.append("/");
+      sb.append(tmp[i]);
+      
+      if (!dirManager.containsDir(sb.toString())) {
+        dirManager.mkDir(sb.toString());
+      }
+    }
   }
 
 }
