@@ -33,7 +33,6 @@ public class DFSWriterStream extends DFSWriter {
       taskTrackers[i] = taskTrackerTable.get(slave.get(i).getId());
       ps[i] = taskTrackers[i].getPrintStream(slave.get(i).getLocalDir());
     }
-
   }
 
   @Override

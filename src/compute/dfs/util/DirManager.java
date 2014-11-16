@@ -88,6 +88,15 @@ public class DirManager {
         dirList.add(dfsDir);
       }
     }
+    
+    for (Entry<String, DistributedFile> entry : distributedFile.entrySet()) {
+      String dfsDir = entry.getKey();
+      if (dfsDir.startsWith(dir)
+              && ((dir.equals("/") && dfsDir.lastIndexOf("/") == 0)
+                      || dfsDir.length() <= dir.length() || dfsDir.charAt(dir.length()) == '/')) {
+        dirList.add(dfsDir);
+      }
+    }
 
     Collections.sort(dirList);
     return dirList;
@@ -121,20 +130,21 @@ public class DirManager {
     }
 
     DistributedFile distributedFile = new DistributedFile(new ArrayList<SlaveLocalFile>());
-    
+
     List<String> slaveId = new ArrayList<String>();
     for (Entry<String, TaskTrackerTableItem> entry : taskTrackerTable.taskTrackerMap.entrySet()) {
       slaveId.add(entry.getKey());
     }
-    
+
     Collections.shuffle(slaveId);
     for (int i = 0; i < AllConfiguration.replicate; i++) {
       String filename = new Long(fileId.decrementAndGet()).toString();
-      distributedFile.getSlaveDir().add(new SlaveLocalFile(slaveId.get(i % slaveId.size()), "tmp/" + filename));
+      distributedFile.getSlaveDir().add(
+              new SlaveLocalFile(slaveId.get(i % slaveId.size()), "tmp/" + filename));
     }
-    
+
     this.distributedFile.put(dfsPath, distributedFile);
-    
+
     return distributedFile;
   }
 

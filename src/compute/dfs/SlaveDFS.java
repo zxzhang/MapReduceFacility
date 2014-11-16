@@ -42,4 +42,9 @@ public class SlaveDFS extends DFS {
   public void finishWrite() {
     jobTracker.finishWrite();
   }
+
+  @Override
+  public void addFile(String dfsPath, String localPath) {
+    jobTracker.addFile(dfsPath, localPath);
+  }
 }

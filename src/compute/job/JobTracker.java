@@ -43,4 +43,6 @@ public interface JobTracker extends Remote {
   public void finishRead();
   
   public void finishWrite();
+
+  public void addFile(String dfsPath, String localPath);
 }

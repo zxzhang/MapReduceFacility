@@ -195,12 +195,19 @@ public class JobTrackerServer implements JobTracker {
 
   @Override
   public void finishRead() {
-    this.readWriteLock.readUnlock();
+    this.dfs.finishRead();
+    // this.readWriteLock.readUnlock();
   }
 
   @Override
   public void finishWrite() {
-    this.readWriteLock.writeUnlock();
+    this.dfs.finishWrite();
+    // this.readWriteLock.writeUnlock();
+  }
+
+  @Override
+  public void addFile(String dfsPath, String localPath) {
+    this.dfs.addFile(dfsPath, localPath);
   }
 
 }

@@ -1,13 +1,19 @@
 package compute.dfs;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
+import compute.configure.AllConfiguration;
 import compute.dfs.iostream.DFSReader;
 import compute.dfs.iostream.DFSReaderStream;
 import compute.dfs.iostream.DFSWriter;
 import compute.dfs.iostream.DFSWriterStream;
 import compute.dfs.util.DirManager;
 import compute.dfs.util.DistributedFile;
+import compute.dfs.util.ReadWriteLock;
 import compute.job.TaskTrackerTable;
 import compute.utility.Host;
 
@@ -17,9 +23,12 @@ public class MasterDFS extends DFS {
 
   private TaskTrackerTable taskTrackerTable = null;
 
+  // private ReadWriteLock readWriteLock = null;
+
   public MasterDFS(TaskTrackerTable taskTrackerTable) {
     this.dirManager = new DirManager();
     this.taskTrackerTable = taskTrackerTable;
+    // this.readWriteLock = ReadWriteLock.getInstance();
   }
 
   @Override
@@ -67,10 +76,58 @@ public class MasterDFS extends DFS {
 
   @Override
   public void finishRead() {
+    ReadWriteLock.getInstance().readUnlock();
   }
 
   @Override
   public void finishWrite() {
+    ReadWriteLock.getInstance().writeUnlock();
+  }
+
+  @Override
+  public void addFile(String dfsPath, String localPath) {
+
+    FileReader reader;
+
+    try {
+      reader = new FileReader(localPath);
+    } catch (FileNotFoundException e) {
+      System.out.println(e.getMessage());
+      return;
+    }
+
+    BufferedReader bf = new BufferedReader(reader);
+    int numOfLine = 0; // AllConfiguration.blockFileLength;
+
+    String line = null;
+    DFSWriter writer = null;
+
+    try {
+      while ((line = bf.readLine()) != null) {
+        
+        if (numOfLine == 0) {
+          if (writer != null) {
+            finishWrite();
+          }
+          
+          writer = getWriter(dfsPath);
+          numOfLine = AllConfiguration.blockFileLength;
+        }
+        
+        writer.println(line.trim());
+        
+        numOfLine--;
+      }
+      
+      finishWrite();
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+      return;
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return;
+    }
+
   }
 
 }
