@@ -2,11 +2,11 @@ package compute.task.box;
 
 import java.lang.reflect.Type;
 
+import compute.dfs.DFS;
+import compute.dfs.iostream.DFSReader;
 import compute.mapper.Context;
 import compute.mapper.Mapper;
 import compute.task.MapTask;
-import compute.test.DFS;
-import compute.test.DFSReader;
 
 public class MapTaskBox extends TaskBox{
   DFS dfs;

@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import compute.dfs.DFS;
+import compute.dfs.iostream.DFSWriter;
 import compute.reducer.OutputCollector;
 import compute.reducer.Reducer;
 import compute.task.ReduceTask;
 import compute.task.Task;
-import compute.test.DFS;
 
 public class ReduceTaskBox extends TaskBox {
   DFS dfs;
@@ -65,6 +66,7 @@ public class ReduceTaskBox extends TaskBox {
     
 
     OutputCollector outputCollector = null;
+    
     try {
        outputCollector = new OutputCollector(
                         dfs.getWriter(reduceTask.getDfsOutputPath()));

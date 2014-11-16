@@ -1,6 +1,6 @@
 package compute.reducer;
 
-import compute.test.DFSWriter;
+import compute.dfs.iostream.DFSWriter;
 
 public class OutputCollector<KEY, VALUE>{
   DFSWriter dfsWriter;

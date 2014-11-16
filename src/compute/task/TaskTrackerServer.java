@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import compute.configure.TaskTrackerConfiguration;
+import compute.dfs.DFS;
+import compute.dfs.SlaveDFS;
 import compute.job.Job;
 import compute.job.JobTracker;
 import compute.job.message.HeartbeatMessage;
@@ -38,8 +40,6 @@ import compute.task.box.ReduceCallback;
 import compute.task.box.ReducePreprocessCallback;
 import compute.task.box.ReducePreprocessTaskBox;
 import compute.task.box.ReduceTaskBox;
-import compute.test.DFS;
-import compute.test.FakeDFS;
 import compute.utility.Host;
 import compute.utility.HostUtility;
 import compute.utility.LocalIOUtility;
@@ -398,13 +398,15 @@ public class TaskTrackerServer implements TaskTracker {
           System.exit(0);
         } 
         taskTracker.setJobTracker(jobTracker);
+        
+        // build connection with DFS
+        DFS dfs = new SlaveDFS(jobTracker);
+        taskTracker.setDFS(dfs);
+        
     } catch (Exception e) {
         System.err.println("Client exception: " + e.toString());
         e.printStackTrace();
     }
-    // build connection with DFS
-    DFS dfs = FakeDFS.getConnection("localhost", 8888);
-    taskTracker.setDFS(dfs);
     
     // run taskTracker
     taskTracker.run();
