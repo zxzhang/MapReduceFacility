@@ -1,5 +1,8 @@
 package compute.job;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -119,7 +122,14 @@ public class JobTrackerServer implements JobTracker {
       registry.rebind("jobtracker", stub);
       System.out.println("Server ready");
 
-      obj.run();
+      // obj.run();
+
+      // /////////////////////////
+
+      obj.startTinyShell();
+
+      // /////////////////////////
+
     } catch (Exception e) {
       System.err.println("Server exception[RemoteException] : " + e.toString());
       e.printStackTrace();
@@ -226,4 +236,48 @@ public class JobTrackerServer implements JobTracker {
     this.dfs.writeUnLock(dfsPath);
   }
 
+  public void startTinyShell() throws Exception {
+    System.out.println("15640 project-1 ...");
+
+    // doHelp();
+
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    while (true) {
+      System.out.print("tsh> ");
+      String command = null;
+
+      try {
+        command = br.readLine();
+      } catch (IOException e) {
+        System.out.println(e.getMessage());
+        System.exit(1);
+      }
+
+      processCommand(command);
+    }
+  }
+
+  private void processCommand(String command) throws Exception {
+    if (command == null) {
+      return;
+    }
+
+    String[] args = command.split("\\s+");
+    if (args.length == 0) {
+      return;
+    }
+
+    switch (args[0]) {
+      case "slave":
+        System.out.println(this.taskTrackerTable);
+        break;
+      case "test":
+        this.dfs.addFile("/test/input", "/tmp/test.txt");
+        break;
+      default:
+        System.out.println("Unknown command! Please input again...");
+        break;
+    }
+  }
 }

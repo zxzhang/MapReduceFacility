@@ -2,7 +2,7 @@ package compute.dfs;
 
 import compute.dfs.util.DirManager;
 
-public class testDirManager {
+public class TestDirManager {
   public static void main(String[] args) {
     DirManager obj = new DirManager();
     obj.printLs("/");
