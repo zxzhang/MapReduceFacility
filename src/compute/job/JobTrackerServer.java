@@ -42,11 +42,7 @@ public class JobTrackerServer implements JobTracker {
     // find all spilt input files
     List<String> splitInputFiles = dfs.ls(dfsInputPath);// must know the data's location
     
-//    System.out.println(dfsInputPath);
-//    for(String splitInputFile : splitInputFiles){
-//      System.out.println(splitInputFiles);
-//    }
-    
+
     // add into task queue
     Job job = jobTable.addJob(dfsInputPath, dfsOutputPath, mapper, reducer, splitInputFiles);
 
