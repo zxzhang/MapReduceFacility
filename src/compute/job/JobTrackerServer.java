@@ -41,7 +41,12 @@ public class JobTrackerServer implements JobTracker {
           Class<? extends Mapper> mapper, Class<? extends Reducer> reducer) {
     // find all spilt input files
     List<String> splitInputFiles = dfs.ls(dfsInputPath);// must know the data's location
-
+    
+//    System.out.println(dfsInputPath);
+//    for(String splitInputFile : splitInputFiles){
+//      System.out.println(splitInputFiles);
+//    }
+    
     // add into task queue
     Job job = jobTable.addJob(dfsInputPath, dfsOutputPath, mapper, reducer, splitInputFiles);
 
@@ -122,11 +127,11 @@ public class JobTrackerServer implements JobTracker {
       registry.rebind("jobtracker", stub);
       System.out.println("Server ready");
 
-      // obj.run();
+      obj.run();
 
       // /////////////////////////
 
-      obj.startTinyShell();
+//      obj.startTinyShell();
 
       // /////////////////////////
 

@@ -46,12 +46,12 @@ public class MasterDFS extends DFS {
 
   @Override
   public DFSWriter getWriter(String dfsPath) throws Exception {
-    if (dirManager.checkFile(dfsPath)) {
-      return null;
-    }
+//    if (dirManager.checkFile(dfsPath)) {
+//      return null;
+//    }
 
     if (!dirManager.checkDir(dfsPath)) {
-      return null;
+      addDir(dfsPath);
     }
 
     DistributedFile dFile = dirManager.addDistributedFile(dfsPath, taskTrackerTable);
@@ -84,6 +84,7 @@ public class MasterDFS extends DFS {
       reader = new FileReader(localPath);
     } catch (FileNotFoundException e) {
       System.out.println(e.getMessage());
+      e.printStackTrace();
       return;
     }
 
@@ -122,10 +123,12 @@ public class MasterDFS extends DFS {
     } catch (IOException e) {
       System.out.println("IO error...");
       System.out.println(e.getMessage());
+      e.printStackTrace();
       return;
     } catch (Exception e) {
       System.out.println("Exception...");
       System.out.println(e.getMessage());
+      e.printStackTrace();
       return;
     }
 
