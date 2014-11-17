@@ -13,7 +13,6 @@ import compute.utility.Host;
 
 
 class TaskTrackerTableItem{
-  
   TaskTracker taskTracker;
   long lastUpdateTime; // secs
   Host host;
@@ -66,15 +65,16 @@ public class TaskTrackerTable {
     return thisTaskTrackerId;
   }
   
-  public List<TaskTracker> checkDeadTaskTrackers(){
-    List<TaskTracker> deadTaskTrackers = null;
-    for(TaskTrackerTableItem item: this.taskTrackerMap.values()){
+  public List<String> checkDeadTaskTrackerIds(){
+    List<String> deadTaskTrackerIds = null;
+    for(String taskTrackerId: this.taskTrackerMap.keySet()){
+      TaskTrackerTableItem item = this.taskTrackerMap.get(taskTrackerId);
       if((System.currentTimeMillis()/1000 -  item.getLastUpdateTime()) > AllConfiguration.taskTrackerDieOutTime){
-        if(deadTaskTrackers == null){ deadTaskTrackers = new ArrayList<TaskTracker>();}
-        deadTaskTrackers.add(item.getTaskTracker());
+        if(deadTaskTrackerIds == null){ deadTaskTrackerIds = new ArrayList<String>();}
+        deadTaskTrackerIds.add(taskTrackerId);
       }
     }
-    return deadTaskTrackers;
+    return deadTaskTrackerIds;
   }
   
   public long updateTime(String taskTrackerId){
@@ -113,13 +113,12 @@ public class TaskTrackerTable {
     this.put(taskTrackerId, taskTracker);
   }
   
-//  
-//  public void removeAll(List<TaskTracker> taskTrackers){
-//    for(TaskTracker taskTracker : taskTrackers){
-//      this.remove(taskTracker.getTaskTrackerId());
-//    }
-//  }
-//  
+  public void removeAll(List<String> taskTrackerIds){
+    for(String taskTrackerId : taskTrackerIds){
+      this.remove(taskTrackerId);
+    }
+  }
+  
   public void remove(String taskTrackerId)  {
     this.taskTrackerMap.remove(taskTrackerId);
   }
@@ -139,6 +138,11 @@ public class TaskTrackerTable {
     return null;
   } 
   
+  public Host getHost(String id){
+    TaskTrackerTableItem item = this.taskTrackerMap.get(id);
+    if(item == null){return null;}
+    return item.getHost();
+  }
   
   public TaskTrackerStats getTaskTrackerStats(Host host){
     for(TaskTrackerTableItem taskTrackerItem: taskTrackerMap.values()){

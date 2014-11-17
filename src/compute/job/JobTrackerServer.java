@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 
 import jdk.internal.org.objectweb.asm.util.CheckFieldAdapter;
@@ -18,6 +19,7 @@ import compute.task.ReduceTask;
 import compute.task.TaskTracker;
 import compute.test.DFS;
 import compute.test.FakeDFS;
+import compute.utility.Host;
 
 
 public class JobTrackerServer implements JobTracker {
@@ -66,13 +68,30 @@ public class JobTrackerServer implements JobTracker {
     }
   }
   
+  public void processDeadTaskTrakcers(List<String> deadTaskTrackerIds){
+    // remove hosts from taskScheduler job2reducerHostList
+    List<Host> deadHosts = new ArrayList<Host>();
+    for(String deadTaskTrackerId : deadTaskTrackerIds){
+      deadHosts.add(taskTrackerTable.getHost(deadTaskTrackerId));
+    }
+    // remove hosts
+    taskScheduler.removeAllReduceHosts(deadHosts);
+    // remove from taskTrackerTable
+    taskTrackerTable.removeAll(deadTaskTrackerIds);
+    // reschedule tasks
+    
+    
+    //
+  }
+  
   public void run() throws InterruptedException{
       while(true){ // the loop executes each 1 secs        
         // check task trackers are alive or not
-        List<TaskTracker> deadTaskTrackers = taskTrackerTable.checkDeadTaskTrackers();
-        if(deadTaskTrackers != null && deadTaskTrackers.size() >0 ){
-          
+        List<String> deadTaskTrackerIds = taskTrackerTable.checkDeadTaskTrackerIds();
+        if(deadTaskTrackerIds != null && deadTaskTrackerIds.size() >0 ){
+          processDeadTaskTrakcers(deadTaskTrackerIds);
         }
+        
         
         // check tasks
         if(taskScheduler.getPenndingMapTasksSize()> 0){
