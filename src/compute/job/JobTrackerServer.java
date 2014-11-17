@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 
 import compute.dfs.DFS;
@@ -25,6 +26,7 @@ import compute.task.ReducePreprocessTask;
 import compute.task.ReduceTask;
 import compute.task.TaskTracker;
 import compute.utility.Host;
+
 
 public class JobTrackerServer implements JobTracker {
   JobTable jobTable;
@@ -67,47 +69,69 @@ public class JobTrackerServer implements JobTracker {
     dfs = new MasterDFS(taskTrackerTable);// FakeDFS.getConnection("localhost", 8888);
     taskScheduler = new TaskScheduler(dfs, taskTrackerTable);
   }
-
-  public boolean register(TaskTracker taskTracker) throws RemoteException {
-    try {
-      taskTrackerTable.put(taskTracker.getTaskTrackerId(), taskTracker);
+  
+  public String register(TaskTracker taskTracker) throws RemoteException{
+    try{
+      taskTrackerTable.add(taskTracker);
       taskTracker.ack();
-      return true;
-    } catch (Exception e) {
-      return false;
+      return taskTracker.getTaskTrackerId();
+    }catch(Exception e){
+      return null;
     }
   }
-
-  public void run() throws InterruptedException {
-    while (true) { // the loop executes each 1 secs
-      // check
-      if (taskScheduler.getPenndingMapTasksSize() > 0) {
-        taskScheduler.schedulePendingMapTask();
-      }
-      if (taskScheduler.getFinishedMapTaskSize() > 0) {
-        taskScheduler.scheduleFinishedMapTask();
-      }
-      if (taskScheduler.getPenndingReducePreprocessTasksSize() > 0) {
-        taskScheduler.schedulePendingReducePreprocessTask();
-      }
-      if (taskScheduler.getFinishedReducePreprocessTasksSize() > 0) {
-        taskScheduler.scheduleFinishedReducePreprocessTask();
-      }
-      if (taskScheduler.getPenndingReduceTasksSize() > 0) {
-        taskScheduler.schedulePendingReduceTask();
-      }
-      if (taskScheduler.getFinishedReduceTaskSize() > 0) {
-        List<Job> finishedJobs = taskScheduler.checkFinishedJobs();
-        for (Job job : finishedJobs) {
-          if (!jobTable.updateJobStatus(job.getJobId(), JobStatus.COMPLETED)) {
-            System.out.println("Cannot update job status: " + job.getJobId());
-          }
-        }
-      }
-
-      System.out.println(taskScheduler);
-      Thread.sleep(1000);
+  
+  public void processDeadTaskTrakcers(List<String> deadTaskTrackerIds){
+    // remove hosts from taskScheduler job2reducerHostList
+    List<Host> deadHosts = new ArrayList<Host>();
+    for(String deadTaskTrackerId : deadTaskTrackerIds){
+      deadHosts.add(taskTrackerTable.getHost(deadTaskTrackerId));
     }
+    // remove hosts
+    taskScheduler.removeAllReduceHosts(deadHosts);
+    // remove from taskTrackerTable
+    taskTrackerTable.removeAll(deadTaskTrackerIds);
+    // reschedule tasks
+    
+    
+    //
+  }
+  
+  public void run() throws InterruptedException {
+      while(true){ // the loop executes each 1 secs        
+        // check task trackers are alive or not
+        List<String> deadTaskTrackerIds = taskTrackerTable.checkDeadTaskTrackerIds();
+        if(deadTaskTrackerIds != null && deadTaskTrackerIds.size() >0 ){
+          processDeadTaskTrakcers(deadTaskTrackerIds);
+        }       
+        
+        // check tasks
+        if(taskScheduler.getPenndingMapTasksSize()> 0){
+          taskScheduler.schedulePendingMapTask();
+        }
+        if(taskScheduler.getFinishedMapTaskSize() > 0){
+          taskScheduler.scheduleFinishedMapTask();
+        } 
+        if(taskScheduler.getPenndingReducePreprocessTasksSize() > 0){
+          taskScheduler.schedulePendingReducePreprocessTask();
+        }        
+        if(taskScheduler.getFinishedReducePreprocessTasksSize() > 0){
+          taskScheduler.scheduleFinishedReducePreprocessTask();
+        }
+        if(taskScheduler.getPenndingReduceTasksSize() > 0){
+          taskScheduler.schedulePendingReduceTask();
+        }
+        if(taskScheduler.getFinishedReduceTaskSize() > 0){
+          List<Job> finishedJobs = taskScheduler.checkFinishedJobs();
+          for(Job job: finishedJobs){
+            if(!jobTable.updateJobStatus(job.getJobId(), JobStatus.COMPLETED)){
+              System.out.println("Cannot update job status: "+job.getJobId());
+            }
+          } 
+        }
+        
+        System.out.println(taskScheduler);
+        Thread.sleep(1000);
+      }
   }
 
   public static void main(String[] args) {

@@ -117,6 +117,20 @@ public class TaskScheduler {
     return true;
   }    
   /****************************************************************************/
+
+  public void removeAllReduceHosts(List<Host> hostList){
+    for(Host host : hostList){
+      removeReducerHost(host);
+    }
+  }
+  
+  public void removeReducerHost(Host host){
+    for(List<Host> hostList: job2reducerHostList.values()){
+      hostList.remove(host);
+    }
+  }
+  
+  /****************************************************************************/
   
   List<MapTask> splitJobToMapTaskList(Job job){
     List<MapTask> mapTaskList = new ArrayList<MapTask>();
