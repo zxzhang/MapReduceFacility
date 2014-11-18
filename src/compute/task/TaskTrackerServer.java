@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import compute.configure.ReadConfFile;
 import compute.configure.TaskTrackerConfiguration;
 import compute.dfs.DFS;
 import compute.dfs.SlaveDFS;
@@ -462,6 +463,8 @@ public class TaskTrackerServer implements TaskTracker {
   /****************************************************************************/
 
   public static void main(String[] args) throws Exception {
+    ReadConfFile.readConfFile();
+    
     String jobTrackerHost = args[0];
     int jobTrackerPort = 1099;
     int taskTrackerPort = Integer.parseInt(args[1]);

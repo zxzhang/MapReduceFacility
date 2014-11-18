@@ -9,6 +9,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
+import compute.configure.ReadConfFile;
 import compute.dfs.DFS;
 import compute.dfs.MasterDFS;
 import compute.dfs.iostream.DFSReader;
@@ -110,7 +111,9 @@ public class JobTrackerServer implements JobTracker {
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
+    ReadConfFile.readConfFile();
+    
     String host = "localhost";
     // launch JobTrackerServer
     try {

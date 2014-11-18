@@ -12,6 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
 
+import compute.configure.ReadConfFile;
 import compute.dfs.iostream.DFSReader;
 import compute.job.JobStatus;
 import compute.job.JobTracker;
@@ -145,6 +146,8 @@ public class JobClient {
 //  }
   
   public static void main(String[] args) throws Exception{
+    ReadConfFile.readConfFile();
+    
     // host 
     String jobTrackerHost = args[0];
     
