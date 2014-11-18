@@ -64,7 +64,6 @@ public class ReduceTaskBox extends TaskBox {
     // create outputCollector
     ReduceTask reduceTask = (ReduceTask) task;
     
-
     OutputCollector outputCollector = null;
     
     try {

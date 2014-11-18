@@ -4,8 +4,10 @@ classpath=bin/
 mapper=compute.mapper.WordCountMapper
 reducer=compute.reducer.WordCountReducer
 rmiregistryPort=1099
-inputDir=input
-outputDir=output
+localInputFile=data/apple_data.txt
+localOutputDir=data/output
+dfsInputDir=input
+dfsOutputDir=output
 
 
 deploy:
@@ -15,9 +17,9 @@ kill:
 rmi:
 	cd bin/; rmiregistry &
 run:
-#java -cp $(classpath) compute.job.JobTrackerServer > job_server.log & 
-#	@sleep 1
+	java -cp $(classpath) compute.job.JobTrackerServer > job_server.log & 
+	@sleep 1
 	java -cp $(classpath) compute.task.TaskTrackerServer localhost $(rmiregistryPort) > task_server.log &
-#	@sleep 1
- #   java -cp $(classpath) compute.job.JobTrackerServer > job_server.log
-#	java -cp $(classpath) compute.client.JobClient localhost $(inputDir) $(outputDir) $(mapper) $(reducer)
+	@sleep 1
+#   java -cp $(classpath) compute.job.JobTrackerServer > job_server.log
+	java -cp $(classpath) compute.client.JobClient localhost $(localInputFile) $(dfsInputDir) $(localOutputDir) $(dfsOutputDir) $(mapper) $(reducer)

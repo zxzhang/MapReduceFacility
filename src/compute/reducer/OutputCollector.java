@@ -4,7 +4,7 @@ import compute.dfs.iostream.DFSWriter;
 
 public class OutputCollector<KEY, VALUE>{
   DFSWriter dfsWriter;
-  public OutputCollector(DFSWriter dfsWriter){
+  public OutputCollector(DFSWriter dfsWriter){    
     this.dfsWriter = dfsWriter;
   }
   

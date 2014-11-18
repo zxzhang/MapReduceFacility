@@ -16,6 +16,12 @@ import compute.task.TaskTracker;
 import compute.utility.Host;
 
 public class RemoteIOUtility {
+  
+  public static String getFilename(String dfsPath){
+    String[] tmp = dfsPath.split("/");
+    return tmp[tmp.length-1];
+  }
+  
   public static boolean copyFile(Host remoteHost, String remotePath, String localPath){    
     Registry remoteRegistry;
     TaskTracker taskTracker = null;
