@@ -12,8 +12,13 @@ localOutputDir=data/output
 dfsInputDir=input
 dfsOutputDir=output
 
-deploy:
-	cd data; python deploy.py
+
+compile:
+	javac -d bin/ src/compute/*/*.java src/compute/*/*/*.java
+clean:
+	rm -rf bin/*
+	rm -rf data/output/
+	rm *.log
 kill:
 	killall java
 	killall rmiregistry
