@@ -383,32 +383,6 @@ public class TaskTrackerServer implements TaskTracker {
 
       Thread.sleep(1000);
 
-      // if (count == 10) {
-      // this.dfs.addFile("/test/input/test.txt", "tmp/test.txt");
-      // System.out.println("test");
-      // }
-      //
-      // if (count == 23) {
-      // DFSReader reader = null;
-      // System.out.println("test1");
-      // try {
-      // reader = this.dfs.getReader("/test/input/test.txta");
-      // } catch (Exception e) {
-      // e.printStackTrace();
-      // }
-      //
-      // String line = null;
-      //
-      // try {
-      // while ((line = reader.readLine()) != null) {
-      // System.out.println(line);
-      // }
-      // } catch (Exception e) {
-      // e.printStackTrace();
-      // }
-      // }
-      //
-      // count++;
     }
   }
 
@@ -450,9 +424,10 @@ public class TaskTrackerServer implements TaskTracker {
   /****************************************************************************/
 
   public static void main(String[] args) throws Exception {
-    String jobTrackerHost = args[0];
-    int jobTrackerPort = 1099;
-    int taskTrackerPort = Integer.parseInt(args[1]);
+    int taskTrackerPort = Integer.parseInt(args[0]);
+    String jobTrackerHost = args[1];
+    int jobTrackerPort = Integer.parseInt(args[2]);
+
 
     // launch local server for task tracker
     String localHostName = HostUtility.getHostName();
@@ -463,7 +438,6 @@ public class TaskTrackerServer implements TaskTracker {
 
     registry.rebind("tasktracker", stub);
 
-    // args[0] = job tracker host
     // build connection with JobTracker
     try {
         Registry remoteRegistry = LocateRegistry.getRegistry(jobTrackerHost, jobTrackerPort);

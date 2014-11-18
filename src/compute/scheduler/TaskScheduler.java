@@ -410,7 +410,7 @@ public class TaskScheduler {
     for( Host deadHost : deadHosts){
 
       List<Task> deadHostTasks = this.host2taskList.get(deadHost);
-
+      if(deadHostTasks == null){ continue; }
       // regenerate it's task into pending queue
       for(Task deadHostTask : deadHostTasks){
         Task reviveTask =null;

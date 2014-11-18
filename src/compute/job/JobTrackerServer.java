@@ -142,6 +142,7 @@ public class JobTrackerServer implements JobTracker {
 
   public static void main(String[] args) {
     String host = "localhost";
+    int port = Integer.parseInt(args[0]);
     // launch JobTrackerServer
     try {
       System.out.println("Server init.");
@@ -155,12 +156,6 @@ public class JobTrackerServer implements JobTracker {
 
       obj.run();
 
-      // /////////////////////////
-
-//      obj.startTinyShell();
-
-      // /////////////////////////
-
     } catch (Exception e) {
       System.err.println("Server exception[RemoteException] : " + e.toString());
       e.printStackTrace();
@@ -169,7 +164,7 @@ public class JobTrackerServer implements JobTracker {
 
   @Override
   public boolean heartbeat(String taskTrackerId, HeartbeatMessage hbm) throws RemoteException {
-    // System.out.println("Heart Beating.: " + taskTrackerId);
+     System.out.println("Heart Beating.: " + taskTrackerId);
 
     // update TaskTracker updated time.
     taskTrackerTable.updateTime(taskTrackerId);
