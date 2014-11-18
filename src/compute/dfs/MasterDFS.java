@@ -62,7 +62,7 @@ public class MasterDFS extends DFS {
 
   @Override
   public List<String> ls(String dfsDirPath) {
-    return dirManager.lsDir(dfsDirPath);
+    return dirManager.lsFile(dfsDirPath);
   }
 
   @Override

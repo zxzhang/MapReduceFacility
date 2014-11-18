@@ -553,11 +553,18 @@ public class TaskTrackerServer implements TaskTracker {
 
   @Override
   public void removeRead(long read) {
+    try {
+      this.readerTable.get(read).close();
+    } catch (IOException e) {
+      System.out.println("Read close IO error...");
+      System.out.println(e.getMessage());
+    }
     this.readerTable.remove(read);
   }
 
   @Override
   public void removeWrite(long write) {
+    this.printTable.get(write).close();
     this.printTable.remove(write);
   }
 

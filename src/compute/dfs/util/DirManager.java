@@ -82,7 +82,7 @@ public class DirManager {
     return false;
   }
 
-  public List<String> lsDir(String dir) {
+  public List<String> lsFile(String dir) {
     List<String> dirList = new ArrayList<String>();
 
     if (dir == null || dir.length() == 0) {
@@ -109,6 +109,25 @@ public class DirManager {
     Collections.sort(dirList);
     return dirList;
   }
+  
+  public List<String> lsDir(String dir) {
+    List<String> dirList = new ArrayList<String>();
+
+    if (dir == null || dir.length() == 0) {
+      return dirList;
+    }
+
+    for (String dfsDir : distributedDir) {
+      if (dfsDir.startsWith(dir)
+              && ((dir.equals("/") && dfsDir.lastIndexOf("/") == 0)
+                      || dfsDir.length() <= dir.length() || dfsDir.charAt(dir.length()) == '/')) {
+        dirList.add(dfsDir);
+      }
+    }
+
+    Collections.sort(dirList);
+    return dirList;
+  }
 
   public void printLs(String dir) {
     List<String> dirList = lsDir(dir);
@@ -119,7 +138,7 @@ public class DirManager {
   }
 
   public List<String> lsDir() {
-    List<String> dirList = new ArrayList<String>(distributedDir);
+    List<String> dirList = new ArrayList<String>(this.distributedDir);
     Collections.sort(dirList);
     return dirList;
   }
