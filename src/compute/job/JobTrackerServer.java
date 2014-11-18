@@ -24,6 +24,7 @@ import compute.scheduler.TaskScheduler;
 import compute.task.MapTask;
 import compute.task.ReducePreprocessTask;
 import compute.task.ReduceTask;
+import compute.task.Task;
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
@@ -86,14 +87,19 @@ public class JobTrackerServer implements JobTracker {
     for(String deadTaskTrackerId : deadTaskTrackerIds){
       deadHosts.add(taskTrackerTable.getHost(deadTaskTrackerId));
     }
-    // remove hosts
-    taskScheduler.removeAllReduceHosts(deadHosts);
-    // remove from taskTrackerTable
+    // remove dead TaskTrackers from taskTrackerTable
     taskTrackerTable.removeAll(deadTaskTrackerIds);
+    
+    // remove dead hosts from ReduceHosts in task scheduler 
+    taskScheduler.removeAllReduceHosts(deadHosts);
+
     // reschedule tasks
+    List<Task> toBeDeletedTasks = new ArrayList<Task>();
+    List<Task> toBeAddedTasks = new ArrayList<Task>();
+    taskScheduler.reschedule(deadHosts, toBeDeletedTasks, toBeAddedTasks);
+    jobTable.deleteTasks(toBeDeletedTasks);
+    jobTable.addTasks(toBeAddedTasks);
     
-    
-    //
   }
   
   public void run() throws InterruptedException {

@@ -12,6 +12,8 @@ import compute.reducer.Reducer;
 import compute.task.MapTask;
 import compute.task.ReducePreprocessTask;
 import compute.task.ReduceTask;
+import compute.task.Task;
+import compute.task.TaskType;
 
 class IDGenerator{
   private SecureRandom random = new SecureRandom();
@@ -60,10 +62,20 @@ public class JobTable {
     job.addMapTask(task);
   }
   
+  public void deleteMapTask(String jobId, MapTask task){
+    Job job = this.get(jobId);
+    job.removeMapTask(task);
+  }
+  
   public void updateReducePreprocessTask(String jobId, ReducePreprocessTask task){
     Job job = this.get(jobId);
     job.removeReducePreprocessTask(task);
     job.addReducePreprocessTask(task);
+  }
+  
+  public void deleteReducePreprocessTask(String jobId, ReducePreprocessTask task){
+    Job job = this.get(jobId);
+    job.removeReducePreprocessTask(task);
   }
   
   public void updateReduceTask(String jobId, ReduceTask task){
@@ -71,6 +83,38 @@ public class JobTable {
     job.removeReduceTask(task);
     job.addReduceTask(task);
   }
+  
+  public void deleteReduceTask(String jobId, ReduceTask task){
+    Job job = this.get(jobId);
+    job.removeReduceTask(task);
+  }
+  
+  public void deleteTasks(List<Task> tasks){
+    for(Task task: tasks){
+      String jobId = task.getJob().getJobId();
+      if(task.getTaskType() == TaskType.MAP){
+        this.deleteMapTask(jobId, (MapTask) task);
+      }else if(task.getTaskType() == TaskType.REDUCEPREPROCESS){
+        this.deleteReducePreprocessTask(jobId, (ReducePreprocessTask) task);
+      }else if(task.getTaskType() == TaskType.REDUCE){
+        this.deleteReduceTask(jobId, (ReduceTask) task);
+      }
+    }
+  }
+  
+  public void addTasks(List<Task> tasks){
+    for(Task task: tasks){
+      String jobId = task.getJob().getJobId();
+      if(task.getTaskType() == TaskType.MAP){
+        this.updateMapTask(jobId, (MapTask) task);
+      }else if(task.getTaskType() == TaskType.REDUCEPREPROCESS){
+        this.updateReducePreprocessTask(jobId, (ReducePreprocessTask) task);
+      }else if(task.getTaskType() == TaskType.REDUCE){
+        this.updateReduceTask(jobId, (ReduceTask) task);
+      }
+    }
+  }
+ 
   
   public boolean updateJobStatus(String jobId, JobStatus status){
     Job job = tableMap.get(jobId);
