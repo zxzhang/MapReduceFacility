@@ -87,29 +87,18 @@ public class TaskTrackerServer implements TaskTracker {
 
   Deque<ReducePreprocessTask> finishedReducePreprocessTasks;
 
-  Deque<ReduceTask> finishedReduceTasks;
+  Deque<ReduceTask> finishedReduceTasks;  
+  
+  
+  public void setJobTracker(JobTracker jobTracker){ this.jobTracker = jobTracker;}
+  public void setDFS(DFS dfs){ this.dfs = dfs;}
+  public String getHostName(){ return this.hostName;}
+  public int getPort(){ return port; }
+  public String getTaskTrackerId(){ return this.taskTrackerId;}
+  public void setTaskTrackerId(String taskTrackerId){ this.taskTrackerId = taskTrackerId;} 
+  
+  public TaskTrackerServer(String hostName, int port){
 
-  public void setJobTracker(JobTracker jobTracker) {
-    this.jobTracker = jobTracker;
-  }
-
-  public void setDFS(DFS dfs) {
-    this.dfs = dfs;
-  }
-
-  public String getHostName() {
-    return this.hostName;
-  }
-
-  public int getPort() {
-    return port;
-  }
-
-  public String getTaskTrackerId() {
-    return this.taskTrackerId;
-  }
-
-  public TaskTrackerServer(String taskTrackerId, String hostName, int port) {
     pendingMapTasks = new LinkedList<MapTask>();
     pendingReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
     pendingReduceTasks = new LinkedList<ReduceTask>();
@@ -122,7 +111,6 @@ public class TaskTrackerServer implements TaskTracker {
     finishedReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
     finishedReduceTasks = new LinkedList<ReduceTask>();
 
-    this.taskTrackerId = taskTrackerId;
     this.hostName = hostName;
     this.port = port;
 
@@ -396,32 +384,6 @@ public class TaskTrackerServer implements TaskTracker {
 
       Thread.sleep(1000);
 
-      // if (count == 10) {
-      // this.dfs.addFile("/test/input/test.txt", "tmp/test.txt");
-      // System.out.println("test");
-      // }
-      //
-      // if (count == 23) {
-      // DFSReader reader = null;
-      // System.out.println("test1");
-      // try {
-      // reader = this.dfs.getReader("/test/input/test.txta");
-      // } catch (Exception e) {
-      // e.printStackTrace();
-      // }
-      //
-      // String line = null;
-      //
-      // try {
-      // while ((line = reader.readLine()) != null) {
-      // System.out.println(line);
-      // }
-      // } catch (Exception e) {
-      // e.printStackTrace();
-      // }
-      // }
-      //
-      // count++;
     }
   }
 
@@ -465,34 +427,35 @@ public class TaskTrackerServer implements TaskTracker {
   public static void main(String[] args) throws Exception {
     ReadConfFile.readConfFile();
     
-    String jobTrackerHost = args[0];
-    int jobTrackerPort = 1099;
-    int taskTrackerPort = Integer.parseInt(args[1]);
+    int taskTrackerPort = Integer.parseInt(args[0]);
+    String jobTrackerHost = args[1];
+    int jobTrackerPort = Integer.parseInt(args[2]);
 
     // launch local server for task tracker
     String localHostName = HostUtility.getHostName();
-    TaskTrackerServer taskTracker = new TaskTrackerServer(localHostName, localHostName,
-            taskTrackerPort);
-    TaskTracker stub = (TaskTracker) UnicastRemoteObject.exportObject(taskTracker, 0);
+
+    TaskTrackerServer taskTracker = new TaskTrackerServer(localHostName, taskTrackerPort);
+    TaskTracker stub = (TaskTracker)UnicastRemoteObject.exportObject(taskTracker, 0);
     Registry registry = LocateRegistry.getRegistry(taskTrackerPort);
 
     registry.rebind("tasktracker", stub);
 
-    // args[0] = job tracker host
     // build connection with JobTracker
     try {
-      Registry remoteRegistry = LocateRegistry.getRegistry(jobTrackerHost, jobTrackerPort);
-      JobTracker jobTracker = (JobTracker) remoteRegistry.lookup("jobtracker");
-      if (!jobTracker.register(stub)) {
-        System.err.println("Cannot register JobTracker: " + jobTrackerHost);
-        System.exit(0);
-      }
-      taskTracker.setJobTracker(jobTracker);
+        Registry remoteRegistry = LocateRegistry.getRegistry(jobTrackerHost, jobTrackerPort);
+        JobTracker jobTracker = (JobTracker) remoteRegistry.lookup("jobtracker");
+        String taskTrackerId = jobTracker.register(stub);
+        if(taskTrackerId == null){
+          System.err.println("Cannot register JobTracker: " + jobTrackerHost);
+          System.exit(0);
+        } else{
+          stub.setTaskTrackerId(taskTrackerId);
+        }
+        taskTracker.setJobTracker(jobTracker);
 
-      // build connection with DFS
-      DFS dfs = new SlaveDFS(jobTracker);
-      taskTracker.setDFS(dfs);
-
+        // build connection with DFS
+        DFS dfs = new SlaveDFS(jobTracker);
+        taskTracker.setDFS(dfs);
     } catch (Exception e) {
       System.err.println("Client exception: " + e.toString());
       e.printStackTrace();

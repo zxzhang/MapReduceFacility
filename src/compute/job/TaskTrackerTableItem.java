@@ -41,4 +41,8 @@ public class TaskTrackerTableItem implements Serializable {
   public void setTaskTrackerStats(TaskTrackerStats taskTrackerStats) {
     this.taskTrackerStats = taskTrackerStats;
   }
+  
+  public long getLastUpdateTime(){
+    return this.lastUpdateTime;
+  }
 }

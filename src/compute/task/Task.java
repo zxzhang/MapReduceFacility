@@ -6,9 +6,6 @@ import compute.job.Job;
 import compute.utility.Host;
 
 
-enum TaskType{
-  MAP, REDUCE, REDUCEPREPROCESS
-}
 
 public abstract class Task implements Serializable{
   static long maxTaskId = 0; 

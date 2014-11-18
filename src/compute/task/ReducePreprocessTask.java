@@ -17,6 +17,19 @@ public class ReducePreprocessTask extends Task{
     this.localSortedOutputFilePath = localSortedOutputFilePath; 
   }
   
+  public ReducePreprocessTask(ReducePreprocessTask oldTask){
+    super();
+    
+    this.reducerNum = oldTask.getReducerNum();
+    this.dataSourceHost = oldTask.getHost();
+    this.localIntermediateFilePath = oldTask.getLocalIntermediateFilePath();
+    this.localSortedOutputFilePath = oldTask.getLocalSortedOutputFilePath();
+    
+    this.setJob(oldTask.job);
+    this.setTaskType(TaskType.REDUCEPREPROCESS);
+    this.setTaskStatus(oldTask.getTaskStatus());
+  }
+  
   public ReducePreprocessTask(int reducerNum, MapTask task){
     super();
 

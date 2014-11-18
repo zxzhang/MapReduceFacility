@@ -3,11 +3,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
 
 import compute.configure.AllConfiguration;
@@ -37,6 +39,10 @@ public class TaskScheduler {
   
   Map<Job, List<Host>> job2reducerHostList; 
   
+  Map<Host, List<Task>> host2taskList;
+  
+  Set<Task> terminatedTasks;
+  
   DFS dfs;
   TaskTrackerTable taskTrackerTable;
 
@@ -53,10 +59,13 @@ public class TaskScheduler {
     this.finishedReducePreprocessTasks = new LinkedList<ReducePreprocessTask>();
     this.finishedReduceTasks = new LinkedList<ReduceTask>();
     
+    this.host2taskList = new HashMap<Host, List<Task>>();
+    
     this.dfs = dfs;
     this.taskTrackerTable = taskTrackerTable;
 
-    job2reducerHostList = new HashMap<Job, List<Host>>();// the index of the host list is the key hash value
+    this.job2reducerHostList = new HashMap<Job, List<Host>>();// the index of the host list is the key hash value
+    this.terminatedTasks = new HashSet<Task>();
   }
   
   public int getPenndingMapTasksSize(){ return this.pendingMapTasks.size();}
@@ -67,34 +76,51 @@ public class TaskScheduler {
   public int getFinishedReducePreprocessTasksSize(){ return this.finishedReducePreprocessTasks.size();}
   public int getFinishedReduceTaskSize(){ return this.finishedReduceTasks.size();}
   
+  public void updateHost2TaskList(Task task){
+    Host host = task.getHost();
+    if(this.host2taskList.containsKey(host)){
+      host2taskList.get(host).remove(task);
+      host2taskList.get(host).add(task);
+    }else{
+      host2taskList.put(host, new ArrayList<Task>());
+      host2taskList.get(host).add(task);
+    }
+  }
+  
   public boolean addPendingMapTask(MapTask task){
     task.setTaskStatus(TaskStatus.PENDING);
     this.pendingMapTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }
   public boolean addRunningMapTask(MapTask task){
     task.setTaskStatus(TaskStatus.RUNNING);
     this.runningMapTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }
   public boolean addFinishedMapTask(MapTask task){
     task.setTaskStatus(TaskStatus.FINISHED);
     this.finishedMapTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }
   public boolean addPendingReducePreprocessTask(ReducePreprocessTask task){
     task.setTaskStatus(TaskStatus.PENDING);
     this.pendingReducePreprocessTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }
   public boolean addRunningReducePreprocessTask(ReducePreprocessTask task){
     task.setTaskStatus(TaskStatus.RUNNING);
     this.runningReducePreprocessTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }
   public boolean addFinishedReducePreprocessTask(ReducePreprocessTask task){
     task.setTaskStatus(TaskStatus.FINISHED);
     this.finishedReducePreprocessTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }  
   public boolean removeFinishedReducePreprocessTask(ReducePreprocessTask task){
@@ -104,18 +130,35 @@ public class TaskScheduler {
   public boolean addPendingReduceTask(ReduceTask task){
     task.setTaskStatus(TaskStatus.PENDING);
     this.pendingReduceTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }
   public boolean addRunningReduceTask(ReduceTask task){
     task.setTaskStatus(TaskStatus.RUNNING);
     this.runningReduceTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }
   public boolean addFinishedReduceTask(ReduceTask task){
     task.setTaskStatus(TaskStatus.FINISHED);
     this.finishedReduceTasks.add(task);
+    this.updateHost2TaskList(task);
     return true;
   }    
+  /****************************************************************************/
+
+  public void removeAllReduceHosts(List<Host> hostList){
+    for(Host host : hostList){
+      removeReducerHost(host);
+    }
+  }
+  
+  public void removeReducerHost(Host host){
+    for(List<Host> hostList: job2reducerHostList.values()){
+      hostList.remove(host);
+    }
+  }
+  
   /****************************************************************************/
   
   List<MapTask> splitJobToMapTaskList(Job job){
@@ -359,6 +402,74 @@ public class TaskScheduler {
     }
     return null;
   }
+  
+  /****************************************************************************/
+
+  public void reschedule(List<Host> deadHosts, List<Task> toBeDeletedTasks, List<Task> toBeAddedTasks){
+
+    for( Host deadHost : deadHosts){
+
+      List<Task> deadHostTasks = this.host2taskList.get(deadHost);
+      if(deadHostTasks == null){ continue; }
+      // regenerate it's task into pending queue
+      for(Task deadHostTask : deadHostTasks){
+        Task reviveTask =null;
+        
+        if(deadHostTask.getTaskType() == TaskType.MAP){
+          MapTask originTask = (MapTask) deadHostTask;
+          reviveTask = (Task) new MapTask(originTask.getDfsInputPath(), originTask.getMapperClass());
+          reviveTask.setJob(originTask.getJob());
+        }else if(deadHostTask.getTaskType() == TaskType.REDUCEPREPROCESS){
+          ReducePreprocessTask originTask = (ReducePreprocessTask) deadHostTask;
+          if(!deadHosts.contains(originTask.getDataSourceHost()) ){
+            reviveTask = (Task) new ReducePreprocessTask(originTask);
+          }
+        }
+//        else if(deadHostTask.getTaskType() == TaskType.REDUCE){
+//          ReduceTask originTask = (ReduceTask) deadHostTask;
+//          reviveTask = (Task) new ReduceTask(originTask);
+//        }
+        if(reviveTask != null){
+          reviveTask.setTaskStatus(TaskStatus.PENDING);
+          toBeAddedTasks.add(reviveTask);
+        }
+        toBeDeletedTasks.add(deadHostTask);
+      }
+      
+      // check whether it contains map intermediate files 
+      // == check-> check it has finished map task
+      List<MapTask> finishedMapTasks = new ArrayList<MapTask>();
+      for(Task deadHostTask: deadHostTasks){
+        if(deadHostTask.getTaskStatus() == TaskStatus.FINISHED &&  
+            deadHostTask.getTaskType() == TaskType.MAP){
+          
+          finishedMapTasks.add((MapTask) deadHostTask);
+        }
+      }
+      
+      // if yes -> kill all dependent reduce pre-fetch tasks and reduce tasks
+      if(finishedMapTasks.size() > 0){
+        Iterator<ReducePreprocessTask> pendingReducePreprocessTaskIter = this.pendingReducePreprocessTasks.iterator();
+        while(pendingReducePreprocessTaskIter.hasNext()){
+          ReducePreprocessTask task = pendingReducePreprocessTaskIter.next();
+          if(task.getDataSourceHost().equals(deadHost)){
+            pendingReducePreprocessTaskIter.remove();
+            this.terminatedTasks.add(task);
+          }
+        }
+        Iterator<ReducePreprocessTask> runningReducePreprocessTaskIter = this.runningReducePreprocessTasks.iterator();
+        while(runningReducePreprocessTaskIter.hasNext()){
+          ReducePreprocessTask task = runningReducePreprocessTaskIter.next();
+          if(task.getDataSourceHost().equals(deadHost)){
+            runningReducePreprocessTaskIter.remove();
+            this.terminatedTasks.add(task);
+          }
+        }
+      }
+    }
+  }
+  
+  /****************************************************************************/
   
   public String toString(){
     return String.format(

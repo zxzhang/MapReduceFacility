@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import compute.job.JobTracker;
 
 public interface TaskTracker extends Remote {
+  public void setTaskTrackerId(String id) throws RemoteException; 
   public String getTaskTrackerId() throws RemoteException;
 
   public void ack() throws RemoteException;

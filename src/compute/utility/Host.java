@@ -27,6 +27,10 @@ public class Host implements Serializable {
     }
     return false;
   }
+  
+  public int hashCode(){
+    return this.url.hashCode() + port ;
+  }
 
   public String toString() {
     return String.format("[host] %s:%d", url, port);
