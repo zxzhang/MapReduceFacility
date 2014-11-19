@@ -5,7 +5,7 @@ import java.io.File;
 import compute.task.TaskTrackerServer;
 
 public class LocalIOUtility {
-  static String spacePrefix = "/tmp/mapreduce";
+  static String spacePrefix = "tmp/mapreduce";
   public static String getLocalSpace(TaskTrackerServer taskTrackerServer){
     String host = taskTrackerServer.getHostName();
     int port = taskTrackerServer.getPort();

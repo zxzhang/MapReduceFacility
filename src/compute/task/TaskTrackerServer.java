@@ -502,7 +502,7 @@ public class TaskTrackerServer implements TaskTracker {
     dirf.mkdirs();
 
     long id = this.ioId.incrementAndGet();
-
+    
     try {
       this.printTable.put(id, new PrintStream(filename));
       return id;
