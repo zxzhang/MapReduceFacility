@@ -144,7 +144,6 @@ public class JobTrackerServer implements JobTracker {
   public static void main(String[] args) throws IOException {
     ReadConfFile.readConfFile();
     
-    String host = "localhost";
     int port = Integer.parseInt(args[0]);
     // launch JobTrackerServer
     try {
@@ -152,7 +151,7 @@ public class JobTrackerServer implements JobTracker {
       JobTrackerServer obj = new JobTrackerServer();
       JobTracker stub = (JobTracker) UnicastRemoteObject.exportObject(obj, 0);
       // Bind the remote object's stub in the RMI registry
-      Registry registry = LocateRegistry.getRegistry(1099);
+      Registry registry = LocateRegistry.getRegistry(port);
 
       registry.rebind("jobtracker", stub);
       System.out.println("Server ready");
