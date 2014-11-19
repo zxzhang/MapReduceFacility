@@ -11,6 +11,15 @@ import compute.job.JobTracker;
 import compute.job.TaskTrackerTable;
 import compute.task.TaskTracker;
 
+/*
+ * DFSReaderStream.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * The implementation of DFSReader.
+ * 
+ * */
+
 public class DFSReaderStream extends DFSReader implements Serializable {
 
   /**

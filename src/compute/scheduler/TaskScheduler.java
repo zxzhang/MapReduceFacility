@@ -25,6 +25,16 @@ import compute.task.*;
 import compute.utility.Host;
 import compute.utility.Pair;
 
+/*
+ * TaskScheduler.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The class schedules the tasks.
+ * 
+ * */
+
+
 public class TaskScheduler {
   Deque<MapTask> pendingMapTasks;
   Deque<ReducePreprocessTask> pendingReducePreprocessTasks;

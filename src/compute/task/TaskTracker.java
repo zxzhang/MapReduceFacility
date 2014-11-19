@@ -10,6 +10,15 @@ import java.rmi.RemoteException;
 
 import compute.job.JobTracker;
 
+/*
+ * TaskTracker.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The task tracker interface.
+ * 
+ * */
+
 public interface TaskTracker extends Remote {
   public void setTaskTrackerId(String id) throws RemoteException; 
   public String getTaskTrackerId() throws RemoteException;

@@ -2,6 +2,15 @@ package compute.task.box;
 
 import compute.task.Task;
 
+/*
+ * TaskBox.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The abstract class of box, which lets task run individually.
+ * 
+ * */
+
 public abstract class TaskBox extends Thread{
   Task task;
   Callback callback;

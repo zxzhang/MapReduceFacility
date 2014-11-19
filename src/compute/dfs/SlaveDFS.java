@@ -8,6 +8,15 @@ import compute.dfs.iostream.DFSWriter;
 import compute.job.JobTracker;
 import compute.utility.Host;
 
+/*
+ * SlaveDFS.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * The implementation of DFS on participant side.
+ * 
+ * */
+
 public class SlaveDFS extends DFS {
 
   private JobTracker jobTracker = null;

@@ -8,6 +8,15 @@ import compute.mapper.Context;
 import compute.mapper.Mapper;
 import compute.task.MapTask;
 
+/*
+ * MapTaskBox.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The box lets the map task run individually.
+ * 
+ * */
+
 public class MapTaskBox extends TaskBox{
   DFS dfs;
   public MapTaskBox(MapTask task, DFS dfs, MapCallback callback){

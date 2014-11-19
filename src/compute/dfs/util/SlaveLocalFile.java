@@ -2,6 +2,13 @@ package compute.dfs.util;
 
 import java.io.Serializable;
 
+/*
+ * SlaveLocalFile.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * */
+
 public class SlaveLocalFile implements Serializable {
 
   /**

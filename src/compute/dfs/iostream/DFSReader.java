@@ -4,6 +4,15 @@ import java.io.Serializable;
 
 import compute.job.JobTracker;
 
+/*
+ * DFSReader.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * The abstract class of DFSReader
+ * 
+ * */
+
 public abstract class DFSReader implements Serializable {
 
   /**

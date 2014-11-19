@@ -4,6 +4,16 @@ import java.io.Serializable;
 
 import compute.job.JobTracker;
 
+/*
+ * DFSWriter.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * The abstract class of DFS Writer.
+ * 
+ * */
+
+
 public abstract class DFSWriter implements Serializable {
 
   /**

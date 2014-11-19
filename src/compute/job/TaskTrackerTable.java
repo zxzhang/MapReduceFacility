@@ -12,6 +12,15 @@ import compute.configure.TaskTrackerConfiguration;
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
+/*
+ * TaskTrackerTable.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * This class manage task trackers(participants) in coordinator. 
+ * 
+ * */
+
 public class TaskTrackerTable implements Serializable{
   
   public int MAXTasktrackerId = 0;

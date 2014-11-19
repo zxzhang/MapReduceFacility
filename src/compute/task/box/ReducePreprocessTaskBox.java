@@ -18,6 +18,16 @@ import compute.task.Task;
 import compute.utility.Host;
 import compute.utility.LocalIOUtility;
 
+/*
+ * ReducePreprocessTaskBox.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The box lets the reduce preprocess task run individually.
+ * 
+ * */
+
+
 class ObjectPair{
   Object first;
   Object second;

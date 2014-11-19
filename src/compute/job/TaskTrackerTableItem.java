@@ -5,6 +5,15 @@ import java.io.Serializable;
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
+/*
+ * TaskTrackerTableItem.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * One row in TaskTrackerTable
+ * 
+ * */
+
 public class TaskTrackerTableItem implements Serializable {
 
   TaskTracker taskTracker;

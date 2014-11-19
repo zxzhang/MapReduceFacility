@@ -5,6 +5,16 @@ import compute.task.ReducePreprocessTask;
 import compute.task.TaskTracker;
 import compute.task.TaskTrackerServer;
 
+/*
+ * ReducePreprocessCallback.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The implementation of call back in ReducePreprocessTaskBox.
+ * 
+ * */
+
+
 public class ReducePreprocessCallback implements Callback{
   TaskTrackerServer taskTracker ;
   

@@ -4,6 +4,15 @@ import java.io.File;
 
 import compute.task.TaskTrackerServer;
 
+/*
+ * LocalIOUtility.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The utility mapper to store intermediate files in it's local file system
+ * 
+ * */
+
 public class LocalIOUtility {
   static String spacePrefix = "tmp/mapreduce";
   public static String getLocalSpace(TaskTrackerServer taskTrackerServer){

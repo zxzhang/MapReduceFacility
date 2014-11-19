@@ -3,6 +3,16 @@ package compute.task;
 import compute.job.Job;
 import compute.mapper.Mapper;
 
+/*
+ * MapTask.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The class stores all information for map task.
+ * 
+ * */
+
+
 public class MapTask extends Task{
   String dfsInputPath;
   String localOutputPath; // assign by task tracker

@@ -5,6 +5,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
+/*
+ * ReadWriteLock.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * The Read Lock and the Write Lock of DFS files
+ * 
+ * */
+
 public class ReadWriteLock implements Serializable {
 
   /**

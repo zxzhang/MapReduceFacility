@@ -5,7 +5,14 @@ import java.io.Serializable;
 import compute.job.Job;
 import compute.utility.Host;
 
-
+/*
+ * Task.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The abstract class of tasks.
+ * 
+ * */
 
 public abstract class Task implements Serializable{
   static long maxTaskId = 0; 

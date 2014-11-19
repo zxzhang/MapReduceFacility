@@ -2,6 +2,16 @@ package compute.reducer;
 
 import compute.dfs.iostream.DFSWriter;
 
+/*
+ * OutputCollector.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * This class collects all output key/value pairs from reducers.
+ * 
+ * */
+
+
 public class OutputCollector<KEY, VALUE>{
   DFSWriter dfsWriter;
   public OutputCollector(DFSWriter dfsWriter){    

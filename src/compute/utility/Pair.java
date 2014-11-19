@@ -1,5 +1,14 @@
 package compute.utility;
 
+/*
+ * Pair.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The class helps to combine to object together.
+ * 
+ * */
+
 public class Pair<V1, V2> {
   V1 first;
   V2 second;

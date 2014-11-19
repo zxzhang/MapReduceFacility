@@ -11,6 +11,16 @@ import compute.job.JobTracker;
 import compute.job.TaskTrackerTable;
 import compute.task.TaskTracker;
 
+/*
+ * DFSWriter.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * The implementation of DFSWriter.
+ * 
+ * */
+
+
 public class DFSWriterStream extends DFSWriter implements Serializable {
 
   /**

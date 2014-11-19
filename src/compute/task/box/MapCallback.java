@@ -3,6 +3,15 @@ package compute.task.box;
 import compute.task.MapTask;
 import compute.task.TaskTrackerServer;
 
+/*
+ * MapCallback.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The implementation of call back in MapTaskBox.
+ * 
+ * */
+
 public class MapCallback implements Callback{
   TaskTrackerServer taskTracker ;
   public MapCallback(TaskTrackerServer taskTracker){

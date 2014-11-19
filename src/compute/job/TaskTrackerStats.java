@@ -2,6 +2,15 @@ package compute.job;
 
 import java.io.Serializable;
 
+/*
+ * TaskTrackerStats.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The task tracker slot statistic.
+ * 
+ * */
+
 public class TaskTrackerStats implements Serializable{
   int mapTaskSlot;
   int reduceTaskSlot;

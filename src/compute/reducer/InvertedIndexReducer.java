@@ -4,6 +4,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+/*
+ * InvertedIndexReducer.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * Sample Mapper for inverted index.
+ * 
+ * */
+
 public class InvertedIndexReducer implements Reducer<String, String, String, String>{
 
   @Override

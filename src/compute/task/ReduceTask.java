@@ -4,6 +4,15 @@ import java.util.List;
 
 import compute.job.Job;
 
+/*
+ * ReduceTask.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The class stores all information for reduce task.
+ * 
+ * */
+
 public class ReduceTask extends Task{
   List<String> localInputPaths;
   String dfsOutputPath; 

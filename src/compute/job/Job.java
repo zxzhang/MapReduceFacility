@@ -11,6 +11,14 @@ import compute.task.MapTask;
 import compute.task.ReducePreprocessTask;
 import compute.task.ReduceTask;
 
+/*
+ * Job.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The job class storing all information about a job. 
+ * 
+ * */
 
 public class Job implements Serializable{
   

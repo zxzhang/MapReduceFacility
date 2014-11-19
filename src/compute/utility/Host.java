@@ -2,6 +2,15 @@ package compute.utility;
 
 import java.io.Serializable;
 
+/*
+ * Host.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The class to identify a host (url + port).
+ * 
+ * */
+
 public class Host implements Serializable {
   String url;
 

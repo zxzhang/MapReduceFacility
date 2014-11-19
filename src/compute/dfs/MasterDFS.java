@@ -16,6 +16,15 @@ import compute.dfs.util.DistributedFile;
 import compute.job.TaskTrackerTable;
 import compute.utility.Host;
 
+/*
+ * MasterDFS.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * The DFS implementation on coordinator side.
+ * 
+ * */
+
 public class MasterDFS extends DFS {
 
   private DirManager dirManager = null;

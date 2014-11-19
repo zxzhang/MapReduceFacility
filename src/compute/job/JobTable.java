@@ -1,6 +1,13 @@
 package compute.job;
 
-
+/*
+ * JobTable.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * This class manage jobs in coordinator. 
+ * 
+ * */
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;

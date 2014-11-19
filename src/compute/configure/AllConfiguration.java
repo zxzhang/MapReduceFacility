@@ -1,5 +1,14 @@
 package compute.configure;
 
+/*
+ * AllConfiguration.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * These parameters are for MapReduce and DFS internal settings
+ * 
+ * */
+
 public class AllConfiguration {
   public static int numOfMapper = 4;
   public static int numOfReducer = 2;

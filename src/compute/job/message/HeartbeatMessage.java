@@ -4,6 +4,15 @@ import java.io.Serializable;
 
 import compute.job.TaskTrackerStats;
 
+/*
+ * HeartbeatMessage.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * Task tracker(participant) sends it's heartbeat with this class
+ * 
+ * */
+
 public class HeartbeatMessage implements Serializable{
   int mapTaskSlot;
   int reducePreprocessTaskSlot;

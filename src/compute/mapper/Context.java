@@ -8,6 +8,15 @@ import java.io.PrintStream;
 
 import compute.configure.AllConfiguration;
 
+/*
+ * Context.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * This class reads input key/value pairs to feed into the mapper.
+ * 
+ * */
+
 public class Context {
   String localDir; 
   String prefix;

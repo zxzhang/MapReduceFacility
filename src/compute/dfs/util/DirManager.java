@@ -14,6 +14,16 @@ import compute.configure.AllConfiguration;
 import compute.job.TaskTrackerTable;
 import compute.job.TaskTrackerTableItem;
 
+/*
+ * DirManager.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * This class manages directories on DFS.
+ * 
+ * */
+
+
 public class DirManager {
 
   private Set<String> distributedDir = null;

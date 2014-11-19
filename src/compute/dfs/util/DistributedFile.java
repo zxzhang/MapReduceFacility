@@ -3,6 +3,15 @@ package compute.dfs.util;
 import java.io.Serializable;
 import java.util.List;
 
+/*
+ * DistributedFiles.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * Distributed file class.
+ * 
+ * */
+
 public class DistributedFile implements Serializable {
 
   /**

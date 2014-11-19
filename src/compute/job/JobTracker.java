@@ -16,6 +16,15 @@ import compute.task.ReduceTask;
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
+/*
+ * JobTracker.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * This class is the interface of JobTacker(coordinator) 
+ * 
+ * */
+
 public interface JobTracker extends Remote {
 
   public String submitJob(String dfsInputPath, String dfsOutputPath,

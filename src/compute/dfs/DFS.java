@@ -2,6 +2,15 @@ package compute.dfs;
 
 import java.util.List;
 
+/*
+ * DFS.java
+ * 
+ * Author:  Zhengxiong Zhang
+ * 
+ * This is the interface for the DFS file system.
+ * 
+ * */
+
 import compute.dfs.iostream.DFSReader;
 import compute.dfs.iostream.DFSWriter;
 import compute.utility.Host;

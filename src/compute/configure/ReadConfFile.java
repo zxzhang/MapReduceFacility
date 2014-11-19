@@ -4,6 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/*
+ * ReadConfFile.java
+ * 
+ * Author: Zhengxiong Zhang
+ * 
+ * This class reads the configuration from file to set internal settings.
+ * 
+ * */
+
 public class ReadConfFile {
   public static void readConfFile() throws IOException {
     

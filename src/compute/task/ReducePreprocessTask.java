@@ -3,6 +3,15 @@ package compute.task;
 import compute.job.Job;
 import compute.utility.Host;
 
+/*
+ * ReducePreprocessTask.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The class store all information for reduce preprocess task.
+ * 
+ * */
+
 public class ReducePreprocessTask extends Task{
   int reducerNum;
   Host dataSourceHost;

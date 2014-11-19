@@ -29,6 +29,14 @@ import compute.task.Task;
 import compute.task.TaskTracker;
 import compute.utility.Host;
 
+/*
+ * JobTrackerServer.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * This is the implementation of the JobTracker.
+ * 
+ * */
 
 public class JobTrackerServer implements JobTracker {
   JobTable jobTable;

@@ -11,6 +11,14 @@ import compute.task.ReduceTask;
 import compute.task.Task;
 import compute.task.TaskStatus;
 
+/*
+ * JobTrackerMessage.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * JobClient get job progresss information with this class. 
+ * 
+ * */
 
 public class JobTrackMessage implements Serializable {
   JobStatus jobStatus;

@@ -48,6 +48,15 @@ import compute.utility.Host;
 import compute.utility.HostUtility;
 import compute.utility.LocalIOUtility;
 
+/*
+ * TaskTrackerServer.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The implementation of Task Tracker interface.
+ * 
+ * */
+
 class MapTaskItem {
   MapTask task;
 }

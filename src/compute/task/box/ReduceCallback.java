@@ -4,6 +4,15 @@ import compute.task.MapTask;
 import compute.task.ReduceTask;
 import compute.task.TaskTrackerServer;
 
+/*
+ * ReduceCallback.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The implementation of call back in ReduceTaskBox.
+ * 
+ * */
+
 public class ReduceCallback implements Callback{
   TaskTrackerServer taskTracker ;
   public ReduceCallback(TaskTrackerServer taskTracker){

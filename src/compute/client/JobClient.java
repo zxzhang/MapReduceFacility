@@ -1,5 +1,14 @@
 package compute.client;
 
+/*
+ * JobClient.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * JobClient help user to upload his/her job request
+ * 
+ * */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

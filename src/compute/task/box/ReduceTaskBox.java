@@ -21,6 +21,15 @@ import compute.reducer.Reducer;
 import compute.task.ReduceTask;
 import compute.task.Task;
 
+/*
+ * ReduceTaskBox.java
+ * 
+ * Author: San-Chuan Hung
+ * 
+ * The box lets the reduce task run individually.
+ * 
+ * */
+
 public class ReduceTaskBox extends TaskBox {
   DFS dfs;
 
