@@ -14,6 +14,7 @@ dfsOutputDir=output
 
 
 compile:
+	mkdir -p bin/
 	javac -d bin/ src/compute/*/*.java src/compute/*/*/*.java
 clean:
 	rm -rf bin/*
