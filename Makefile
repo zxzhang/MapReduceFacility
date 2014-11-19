@@ -6,6 +6,7 @@ reducer=compute.reducer.WordCountReducer
 rmiregistryPort_1=1099
 rmiregistryPort_2=8888
 rmiregistryPort_3=8080
+jobTracker_host=localhost
 jobTracker_port=1099
 localInputFile=data/apple_data.txt
 localOutputDir=data/output
@@ -29,10 +30,10 @@ rmi:
 run:
 	java -cp $(classpath) compute.job.JobTrackerServer $(jobTracker_port) > job_server.log & 
 	@sleep 1
-	java -cp $(classpath) compute.task.TaskTrackerServer $(rmiregistryPort_1) localhost $(jobTracker_port)  > task_server_1.log &
+	java -cp $(classpath) compute.task.TaskTrackerServer $(rmiregistryPort_1) $(jobTracker_host) $(jobTracker_port)  > task_server_1.log &
 	@sleep 1
-	java -cp $(classpath) compute.task.TaskTrackerServer $(rmiregistryPort_2) localhost $(jobTracker_port) > task_server_2.log &
+	java -cp $(classpath) compute.task.TaskTrackerServer $(rmiregistryPort_2) $(jobTracker_host) $(jobTracker_port) > task_server_2.log &
 	@sleep 1
-	java -cp $(classpath) compute.task.TaskTrackerServer $(rmiregistryPort_3) localhost $(jobTracker_port) > task_server_3.log &
+	java -cp $(classpath) compute.task.TaskTrackerServer $(rmiregistryPort_3) $(jobTracker_host) $(jobTracker_port) > task_server_3.log &
 	@sleep 1
-	java -cp $(classpath) compute.client.JobClient localhost $(localInputFile) $(dfsInputDir) $(localOutputDir) $(dfsOutputDir) $(mapper) $(reducer)
+	java -cp $(classpath) compute.client.JobClient $(jobTracker_host) $(jobTracker_port) $(localInputFile) $(dfsInputDir) $(localOutputDir) $(dfsOutputDir) $(mapper) $(reducer)

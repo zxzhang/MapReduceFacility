@@ -76,12 +76,12 @@ public class JobClient {
   
   public void run(String[] args) throws Exception{
     
-    String localInputPath = args[1];
-    String dfsInputPath = args[2];
-    String localOutputPath = args[3];
-    String dfsOutputPath = args[4];
-    String mapperClassStr = args[5];
-    String reducerClassStr = args[6];
+    String localInputPath = args[2];
+    String dfsInputPath = args[3];
+    String localOutputPath = args[4];
+    String dfsOutputPath = args[5];
+    String mapperClassStr = args[6];
+    String reducerClassStr = args[7];
     Class mapper = Class.forName(mapperClassStr);
     Class reducer = Class.forName(reducerClassStr);
     
@@ -150,8 +150,9 @@ public class JobClient {
     
     // host 
     String jobTrackerHost = args[0];
+    int jobTrackerPort = Integer.parseInt(args[1]);
     
-    Registry remoteRegistry = LocateRegistry.getRegistry(jobTrackerHost);
+    Registry remoteRegistry = LocateRegistry.getRegistry(jobTrackerHost, jobTrackerPort);
     JobTracker jobTracker = (JobTracker) remoteRegistry.lookup("jobtracker");
     
     JobClient jobClient = new JobClient(jobTracker);

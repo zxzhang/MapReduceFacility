@@ -2,3 +2,4 @@ bin/*.class
 tmp/*
 data/output/*
 *.log
+/bin/
