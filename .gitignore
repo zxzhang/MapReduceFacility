@@ -1,5 +1,4 @@
-/bin/
-data/*.txt*
+bin/*.class
 tmp/*
 data/output/*
 *.log
