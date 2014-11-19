@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import compute.configure.AllConfiguration;
 import compute.configure.TaskTrackerConfiguration;
@@ -390,8 +391,11 @@ public class TaskScheduler {
 
   public void updateJob2ReducerHostList(Job job, int reducerNum, Host host){
     if(!job2reducerHostList.containsKey(job)){
-      job2reducerHostList.put(job, new ArrayList<Host>(AllConfiguration.numOfReducer));
+      Vector<Host> list = new Vector<Host>(AllConfiguration.numOfReducer);
+      list.setSize(AllConfiguration.numOfReducer);
+      job2reducerHostList.put(job, list);
     }
+    
     this.job2reducerHostList.get(job).add(reducerNum, host);
   }
   

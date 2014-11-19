@@ -314,7 +314,7 @@ public class TaskTrackerServer implements TaskTracker {
     }
   }
 
-  public void checkFinishedReducePreprocessTask() {
+  public synchronized void checkFinishedReducePreprocessTask() {
     Iterator<ReducePreprocessTask> reducePreprocessTasksIter = finishedReducePreprocessTasks
             .iterator();
 
@@ -331,7 +331,7 @@ public class TaskTrackerServer implements TaskTracker {
     }
   }
 
-  public void checkPendingReduceTask() {
+  public synchronized void checkPendingReduceTask() {
     ReduceCallback callback = new ReduceCallback(this);
 
     Iterator<ReduceTask> reduceTaskIter = pendingReduceTasks.iterator();
@@ -347,7 +347,7 @@ public class TaskTrackerServer implements TaskTracker {
     }
   }
 
-  public void checkFinishedReduceTask() {
+  public synchronized void checkFinishedReduceTask() {
     Iterator<ReduceTask> reduceTasksIter = finishedReduceTasks.iterator();
 
     while (reduceTasksIter.hasNext()) {

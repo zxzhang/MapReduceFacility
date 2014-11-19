@@ -15,9 +15,10 @@ public class ReadConfFile {
       while (line != null) {
         String[] str = line.trim().split("\\:");
         
-        if (line.startsWith("Number of Mappers:")) {
-          AllConfiguration.numOfMapper = Integer.parseInt(str[str.length - 1].trim());
-        } else if (line.startsWith("Number of Reducers:")) {
+//        if (line.startsWith("Number of Mappers:")) {
+//          AllConfiguration.numOfMapper = Integer.parseInt(str[str.length - 1].trim());
+//        } else if (line.startsWith("Number of Reducers:")) {
+        if(line.startsWith("Number of Reducers:")){
           AllConfiguration.numOfReducer = Integer.parseInt(str[str.length - 1].trim());
         } else if (line.startsWith("Number of Slaves:")) {
           AllConfiguration.numOfSlaves = Integer.parseInt(str[str.length - 1].trim());
@@ -43,7 +44,7 @@ public class ReadConfFile {
 
   public static void printConfFile() {
     System.out.println("All Configuration: ");
-    System.out.println("Number of Mappers: " + AllConfiguration.numOfMapper);
+//    System.out.println("Number of Mappers: " + AllConfiguration.numOfMapper);
     System.out.println("Number of Reducers: " + AllConfiguration.numOfReducer);
     System.out.println("Number of Slaves: " + AllConfiguration.numOfSlaves);
     System.out.println("Block File length: " + AllConfiguration.blockFileLength);
